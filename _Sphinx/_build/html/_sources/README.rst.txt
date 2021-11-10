@@ -38,7 +38,11 @@ This application idea draws inspiration from Google's
     the data to GoogleDrive, which didn't work because it has trouble dealing
     with such a big amount of data (even unzipping the files directly from Colab
     didn't work). Because of this, I've organized them in a
-    ``datasets.HASYv2Dataset`` class which can be found in the ``_Data`` folder.
+    ``datasets.HASYv2Dataset`` class. However, it also can't be uploaded here
+    because it exceeds 100MB. If you wish to use the codes presented here, you
+    need to unzip the dataset (which can be found
+    `here <https://zenodo.org/record/259444#.YYwmp73MLUJ>`_) in the
+    ``_Data`` folder (creating a ``HASYv2`` folder with all of its contents).
 
 Objectives
 ----------
