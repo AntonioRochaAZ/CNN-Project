@@ -51,7 +51,6 @@ class HASYv2Dataset(DatasetBase):
     def cross_val(self, fold: int, train: bool, dataset: 'HASYv2Dataset' = None):
 
         self.fold = fold
-        self.train = train
         self.inputs = []
         self.output = []
 

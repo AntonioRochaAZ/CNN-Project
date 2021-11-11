@@ -2,7 +2,7 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Neural Networks" href="nets.html" /><link rel="prev" title="Dataset Classes" href="datasets.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Dataset Classes" href="datasets.html" /><link rel="prev" title="ImageNet Project" href="index.html" />
 
     <link rel="shortcut icon" href="_static/favicon.ico"/><meta name="generator" content="sphinx-4.0.2, furo 2021.10.09"/>
         <title>Base Classes and Functions - ImageNet Project</title>
@@ -163,10 +163,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="decorators.html">Decorators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datasets.html">Dataset Classes</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Base Classes and Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Dataset Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nets.html">Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorators.html">Decorators</a></li>
 </ul>
 
 </div>
@@ -197,7 +197,7 @@
 <span id="base-classes-and-functions"></span><h1>Base Classes and Functions<a class="headerlink" href="#module-main" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="main.train_model">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#main.NetBase" title="main.NetBase"><span class="pre">NetBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_epochs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">nn.Loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader_tuple</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generator</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#train_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.train_model" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#main.NetBase" title="main.NetBase"><span class="pre">NetBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_epochs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">nn.Loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader_tuple</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">generator</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#train_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.train_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for training a <a class="reference internal" href="#main.NetBase" title="main.NetBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetBase</span></code></a> model.</p>
 <p>This function will create a folder with reports about the training and the
 model, according to the information contained in the model’s report manager
@@ -212,15 +212,36 @@ losing progress.</p>
 <li><p><strong>nb_epochs</strong> – Number of epochs for training.</p></li>
 <li><p><strong>learning_rate</strong> – The learning rate.</p></li>
 <li><p><strong>loader_tuple</strong> – (training, validation) DataLoader objects.</p></li>
-<li><p><strong>params</strong> – The specific parameters that should be trained, if different
-from the whole network. For this, the model has to have a
-<a class="reference internal" href="#main.NetBase.get_params" title="main.NetBase.get_params"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_params()</span></code></a> method defined to fetch the correct
-parameters.</p></li>
+<li><p><strong>params</strong> – Either the specific parameters that should be trained, if
+different from the whole network, or the <code class="docutils literal notranslate"><span class="pre">params</span></code> argument for
+the model’s <a class="reference internal" href="#main.NetBase.get_params" title="main.NetBase.get_params"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_params()</span></code></a> method. The latter use is
+recommended, since in this case the <code class="docutils literal notranslate"><span class="pre">params</span></code> information will be
+able to be integrated to the training report.</p></li>
 <li><p><strong>loss_fn</strong> – The Loss Function to use.</p></li>
 <li><p><strong>remove_bool</strong> – If we want to delete the Epoch files after the training
 is complete.</p></li>
 <li><p><strong>print_bool</strong> – If we want to print some information during training.</p></li>
+<li><p><strong>comment</strong> – A comment to add to the training report.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.report">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls_instance</span></span></em><span class="sig-paren">)</span> → <span class="pre">str</span><a class="reference internal" href="_modules/main.html#report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for creating a report about an object.</p>
+<p>Returns a string that should describe all of the information needed to
+initialize an identical class. It should also contain complementary
+information that may be useful to the user. This function in itself only
+calls the class’s <code class="docutils literal notranslate"><span class="pre">report</span></code> method, but if none is defined, it will return
+a string with information about the object.</p>
+<p>The classes’ <code class="docutils literal notranslate"><span class="pre">report</span></code> method shouldn’t have any arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cls_instance</strong> – The class instance we want to make a report of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A string with the report.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -262,6 +283,15 @@ information about its training and report manager.</p>
 <dd><p>A shortcut for <code class="docutils literal notranslate"><span class="pre">self.trainclass.manager</span></code>, which is the
 model’s <a class="reference internal" href="#main.ReportManager" title="main.ReportManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportManager</span></code></a>, that stores information about the
 report folder where the model’s information is saved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Why define the model’s manager inside of its TrainingClass?</strong></p>
+<p>This is because a few of <a class="reference internal" href="#main.TrainingClass" title="main.TrainingClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingClass</span></code></a>’s methods use paths that
+are stored in the model’s <a class="reference internal" href="#main.ReportManager" title="main.ReportManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportManager</span></code></a>. If the ReportManager
+was outside it, these paths would have to be redefined inside of the
+training class, which is redundant, and may pose a problem if the user
+ever decides or has to change the report folder paths.</p>
+</div>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.NetBase.report">
@@ -272,7 +302,7 @@ needed to reproduce the neural network’s initialization, as well
 as its representation (<code class="docutils literal notranslate"><span class="pre">.__repr__</span></code>) which is defined by PyTorch’s
 <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>.</p>
 <p>This function shouldn’t have any arguments and can be called through
-the <a class="reference internal" href="#main.NetBase.report" title="main.NetBase.report"><code class="xref py py-func docutils literal notranslate"><span class="pre">report()</span></code></a> function.</p>
+the <a class="reference internal" href="#main.report" title="main.report"><code class="xref py py-func docutils literal notranslate"><span class="pre">report()</span></code></a> function.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.NetBase.reset">
@@ -287,7 +317,7 @@ This method can be useful when training the same network multiple times.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.NetBase.get_params">
-<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span> → <span class="pre">generator</span><a class="reference internal" href="_modules/main.html#NetBase.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.NetBase.get_params" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> → <span class="pre">generator</span><a class="reference internal" href="_modules/main.html#NetBase.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.NetBase.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Placeholder method for fetching a subset of the net’s parameters.</p>
 <p>It should take an argument that can specify which parameters to select
 and return a <code class="docutils literal notranslate"><span class="pre">GeneratorType</span></code> object. See the example below for an
@@ -317,13 +347,13 @@ example of implementation.</p>
             <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorType</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">'1'</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_net_1</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">parameter</span>
             <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin_net_1</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">parameter</span>
-        <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">params</span> <span class="o">==</span> <span class="s1">'2'</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_net_2</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">parameter</span>
             <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin_net_2</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
@@ -345,15 +375,34 @@ example of implementation.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="main.DatasetBase">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">DatasetBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#DatasetBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.DatasetBase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Base class for storing datasets that can be readily used for training.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="main.DatasetBase.inputs">
+<span class="sig-name descname"><span class="pre">inputs</span></span><a class="headerlink" href="#main.DatasetBase.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list that contains the networks’ inputs.
+All pre-treatment must done before-hand.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="main.DatasetBase.output">
+<span class="sig-name descname"><span class="pre">output</span></span><a class="headerlink" href="#main.DatasetBase.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list that contains the expected outputs for training or
+validation. They should also be ready to be read by the loss
+function to be used.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.DatasetBase.report">
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#DatasetBase.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.DatasetBase.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#main.report" title="main.report"><code class="xref py py-func docutils literal notranslate"><span class="pre">report()</span></code></a>.</p>
+</dd></dl>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="main.TrainingClass">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">TrainingClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for storing training information</p>
+<dd><p>Class for storing training information.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.train_list">
 <span class="sig-name descname"><span class="pre">train_list</span></span><a class="headerlink" href="#main.TrainingClass.train_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of <code class="xref py py-class docutils literal notranslate"><span class="pre">TrainData</span></code>
+<dd><p>List of <a class="reference internal" href="#main.TrainingClass.TrainData" title="main.TrainingClass.TrainData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingClass.TrainData</span></code></a>
 objects with the data for each individual training.</p>
 </dd></dl>
 <dl class="py attribute">
@@ -394,19 +443,18 @@ objects with the data for each individual training.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.best_state">
 <span class="sig-name descname"><span class="pre">best_state</span></span><a class="headerlink" href="#main.TrainingClass.best_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>The best state_dict (TODO: must be improved, as of know
-it only takes the last training into account, which excludes
-the rest of the nets parameters…).</p>
+<dd><p>The best state_dict out of all training epochs
+(collections.OrderedDict).</p>
 </dd></dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="main.TrainingClass.report_dir">
-<span class="sig-name descname"><span class="pre">report_dir</span></span><a class="headerlink" href="#main.TrainingClass.report_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>The report directory where all the trianing information
-is stored.</p>
+<dt class="sig sig-object py" id="main.TrainingClass.manager">
+<span class="sig-name descname"><span class="pre">manager</span></span><a class="headerlink" href="#main.TrainingClass.manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#main.ReportManager" title="main.ReportManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportManager</span></code></a> class that manages the model’s
+report folder.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.TrainingClass.add_training">
-<span class="sig-name descname"><span class="pre">add_training</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.add_training"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.add_training" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_training</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.add_training"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.add_training" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Adds a <a class="reference internal" href="#main.TrainingClass.TrainData" title="main.TrainingClass.TrainData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingClass.TrainData</span></code></a> object to</dt><dd><p>the train_list attribute.</p>
 </dd>
@@ -425,14 +473,14 @@ is stored.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.TrainingClass.finish_training">
-<span class="sig-name descname"><span class="pre">finish_training</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> → <span class="pre">None</span><a class="reference internal" href="_modules/main.html#TrainingClass.finish_training"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.finish_training" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">finish_training</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.finish_training"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.finish_training" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method for adapting the class’ attributes after training.</p>
 <p>This adds the last training’s data to the rest of the training
-data, updating the best epoch and state_dict (TODO: improve it).</p>
+data, updating the best epoch and state_dict.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="main.TrainingClass.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'error'</span></span></em><span class="sig-paren">)</span> → <span class="pre">None</span><a class="reference internal" href="_modules/main.html#TrainingClass.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_bool</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'error'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots training or accuracy graphs for all trainings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -459,14 +507,13 @@ trainings.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TrainData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.TrainData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.TrainData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">TrainData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_epochs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">nn.Loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#TrainingClass.TrainData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.TrainingClass.TrainData" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object for storing information of one particular training.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some of the attributes listed below are defined during
-initalization as lists, but become Tensors when the
-<code class="xref py py-func docutils literal notranslate"><span class="pre">finish_training()</span></code>
-method is called.</p>
+initialization as lists, but become Tensors when the
+<a class="reference internal" href="#main.TrainingClass.TrainData.finish_training" title="main.TrainingClass.TrainData.finish_training"><code class="xref py py-func docutils literal notranslate"><span class="pre">finish_training()</span></code></a> method is called.</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.train_error">
@@ -498,7 +545,7 @@ method is called.</p>
 <span class="sig-name descname"><span class="pre">comment</span></span><a class="headerlink" href="#main.TrainingClass.TrainData.comment" title="Permalink to this definition">¶</a></dt>
 <dd><p>A string with a possible comment to be added to the
 training report. In particular, when the training is
-stopped by the user through a KeyboardInterrupt.</p>
+pruned by the user through a <code class="docutils literal notranslate"><span class="pre">KeyboardInterrupt</span></code>.</p>
 </dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.best_epoch">
@@ -508,22 +555,17 @@ stopped by the user through a KeyboardInterrupt.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.best_state">
 <span class="sig-name descname"><span class="pre">best_state</span></span><a class="headerlink" href="#main.TrainingClass.TrainData.best_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>The best state_dict.</p>
+<dd><p>The best state_dict (collections.OrderedDict).</p>
 </dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.nb_epochs">
 <span class="sig-name descname"><span class="pre">nb_epochs</span></span><a class="headerlink" href="#main.TrainingClass.TrainData.nb_epochs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of epochs for training.</p>
+<dd><p>Number of epochs for training (int).</p>
 </dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.learning_rate">
 <span class="sig-name descname"><span class="pre">learning_rate</span></span><a class="headerlink" href="#main.TrainingClass.TrainData.learning_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Learning Rate.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="main.TrainingClass.TrainData.params">
-<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#main.TrainingClass.TrainData.params" title="Permalink to this definition">¶</a></dt>
-<dd><p>The network to train.</p>
+<dd><p>Learning Rate (float).</p>
 </dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="main.TrainingClass.TrainData.loss_fn">
@@ -640,6 +682,11 @@ because during multiple trainings, the same files may be edited
 multiple times, which would result in multiple entries with the same
 name.</p>
 </dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.ReportManager.remove_epochs">
+<span class="sig-name descname"><span class="pre">remove_epochs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ReportManager.remove_epochs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ReportManager.remove_epochs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the epoch state-dicts in the Epochs folder after training.</p>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="main.ReportManager.File">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">File</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ReportManager.File"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ReportManager.File" title="Permalink to this definition">¶</a></dt>
@@ -694,23 +741,23 @@ to find out whether or not the problem can be fixed.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="nets.html">
+          <a class="next-page" href="datasets.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Neural Networks</div>
+                <div class="title">Dataset Classes</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="datasets.html">
+          <a class="prev-page" href="index.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Dataset Classes</div>
+                <div class="title">Home</div>
                 
               </div>
             </a>

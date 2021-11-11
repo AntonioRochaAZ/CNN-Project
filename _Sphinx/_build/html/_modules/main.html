@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
-    <meta name="generator" content="sphinx-4.0.2, furo 2021.10.09"/>
-        <title>main - ImageNet documentation</title>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><meta name="generator" content="sphinx-4.0.2, furo 2021.10.09"/>
+        <title>main - ImageNet Project</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
@@ -17,18 +17,21 @@
   body {
     --color-code-background: #ffffff;
   --color-code-foreground: #4d4d4d;
-  --color-admonition-background: 00FF00;
   
   }
   body[data-theme="dark"] {
     --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #C9FFEE;
+  --color-brand-content: #00FF6A;
   
   }
   @media (prefers-color-scheme: dark) {
     body:not([data-theme="light"]) {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #C9FFEE;
+  --color-brand-content: #00FF6A;
   
     }
   }
@@ -112,7 +115,11 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
-
+<div class="announcement">
+  <aside class="announcement-content">
+     Welcome to ImageNet's documentation! 
+  </aside>
+</div>
 
 <div class="page">
   <header class="mobile-header">
@@ -123,7 +130,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">ImageNet  documentation</div></a>
+      <a href="../index.html"><div class="brand">ImageNet Project</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +153,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">ImageNet  documentation</span>
+  <span class="sidebar-brand-text">ImageNet Project</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -156,10 +163,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../decorators.html">Decorators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Dataset Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../defs.html">Base Classes and Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Dataset Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nets.html">Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decorators.html">Decorators</a></li>
 </ul>
 
 </div>
@@ -190,7 +197,7 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">decorators</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">GeneratorType</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -204,18 +211,13 @@
 <span class="n">Tensor</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span>
 
 <span class="c1"># Functions:</span>
-<span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cls_instance</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-
 <div class="viewcode-block" id="train_model"><a class="viewcode-back" href="../defs.html#main.train_model">[docs]</a><span class="nd">@decorators</span><span class="o">.</span><span class="n">timer</span>
 <span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span>
         <span class="n">model</span><span class="p">:</span> <span class="s1">'NetBase'</span><span class="p">,</span> <span class="n">nb_epochs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">loss_fn</span><span class="p">:</span> <span class="s1">'nn.Loss'</span><span class="p">,</span> <span class="n">loader_tuple</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">],</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">GeneratorType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">print_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">remove_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">GeneratorType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">print_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">remove_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">''</span><span class="p">):</span>
+
     <span class="sd">"""Function for training a :class:`NetBase` model.</span>
 
 <span class="sd">    This function will create a folder with reports about the training and the</span>
@@ -231,19 +233,25 @@
 <span class="sd">        nb_epochs: Number of epochs for training.</span>
 <span class="sd">        learning_rate: The learning rate.</span>
 <span class="sd">        loader_tuple: (training, validation) DataLoader objects.</span>
-<span class="sd">        params: The specific parameters that should be trained, if different</span>
-<span class="sd">            from the whole network. For this, the model has to have a</span>
-<span class="sd">            :func:`~NetBase.get_params` method defined to fetch the correct</span>
-<span class="sd">            parameters.</span>
+<span class="sd">        params: Either the specific parameters that should be trained, if</span>
+<span class="sd">            different from the whole network, or the ``params`` argument for</span>
+<span class="sd">            the model's :func:`~NetBase.get_params` method. The latter use is</span>
+<span class="sd">            recommended, since in this case the ``params`` information will be</span>
+<span class="sd">            able to be integrated to the training report.</span>
 <span class="sd">        loss_fn: The Loss Function to use.</span>
 <span class="sd">        remove_bool: If we want to delete the Epoch files after the training</span>
 <span class="sd">            is complete.</span>
 <span class="sd">        print_bool: If we want to print some information during training.</span>
+<span class="sd">        comment: A comment to add to the training report.</span>
 
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+            <span class="n">comment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Parameter argument: </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
 
@@ -274,8 +282,7 @@
         <span class="p">)</span>
 
     <span class="n">model</span><span class="o">.</span><span class="n">trainclass</span><span class="o">.</span><span class="n">add_training</span><span class="p">(</span>
-        <span class="n">nb_epochs</span><span class="o">=</span><span class="n">nb_epochs</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span> <span class="c1"># params=params,</span>
-        <span class="n">loss_fn</span><span class="o">=</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+        <span class="n">nb_epochs</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()),</span> <span class="n">comment</span>
     <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -351,7 +358,7 @@
 
             <span class="n">model</span><span class="o">.</span><span class="n">trainclass</span><span class="o">.</span><span class="n">train_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add_epoch</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">train_error</span><span class="p">[</span><span class="n">epoch</span><span class="p">],</span> <span class="n">valid_error</span><span class="p">[</span><span class="n">epoch</span><span class="p">]),</span>
-                <span class="p">(</span><span class="n">train_accur</span><span class="p">[</span><span class="n">epoch</span><span class="p">],</span> <span class="n">valid_accur</span><span class="p">[</span><span class="n">epoch</span><span class="p">]),</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+                <span class="p">(</span><span class="n">train_accur</span><span class="p">[</span><span class="n">epoch</span><span class="p">],</span> <span class="n">valid_accur</span><span class="p">[</span><span class="n">epoch</span><span class="p">]),</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
             <span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
@@ -373,7 +380,7 @@
     <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trainclass</span><span class="o">.</span><span class="n">train_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">best_state</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">remove_bool</span><span class="p">:</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">trainclass</span><span class="o">.</span><span class="n">remove_epochs</span><span class="p">()</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">remove_epochs</span><span class="p">()</span>
 
     <span class="k">with</span> <span class="n">manager</span><span class="p">(</span><span class="s1">'TrainingReport.txt'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">report</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trainclass</span><span class="p">))</span>
@@ -385,6 +392,29 @@
     <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">'cpu'</span><span class="p">))</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">manager</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/best_model.pkl'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="report"><a class="viewcode-back" href="../defs.html#main.report">[docs]</a><span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">"""Function for creating a report about an object.</span>
+
+<span class="sd">    Returns a string that should describe all of the information needed to</span>
+<span class="sd">    initialize an identical class. It should also contain complementary</span>
+<span class="sd">    information that may be useful to the user. This function in itself only</span>
+<span class="sd">    calls the class's ``report`` method, but if none is defined, it will return</span>
+<span class="sd">    a string with information about the object.</span>
+
+<span class="sd">    The classes' ``report`` method shouldn't have any arguments.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cls_instance: The class instance we want to make a report of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A string with the report.</span>
+
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cls_instance</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">cls_instance</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span></div>
 
 <div class="viewcode-block" id="NetBase"><a class="viewcode-back" href="../defs.html#main.NetBase">[docs]</a><span class="k">class</span> <span class="nc">NetBase</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">"""Base class for neural networks.</span>
@@ -406,6 +436,15 @@
 <span class="sd">        manager: A shortcut for ``self.trainclass.manager``, which is the</span>
 <span class="sd">            model's :class:`ReportManager`, that stores information about the</span>
 <span class="sd">            report folder where the model's information is saved.</span>
+
+<span class="sd">            .. note::</span>
+<span class="sd">                **Why define the model's manager inside of its TrainingClass?**</span>
+
+<span class="sd">                This is because a few of :class:`TrainingClass`'s methods use paths that</span>
+<span class="sd">                are stored in the model's :class:`ReportManager`. If the ReportManager</span>
+<span class="sd">                was outside it, these paths would have to be redefined inside of the</span>
+<span class="sd">                training class, which is redundant, and may pose a problem if the user</span>
+<span class="sd">                ever decides or has to change the report folder paths.</span>
 
 <span class="sd">    """</span>
 
@@ -456,7 +495,7 @@
         <span class="sd">"""The model's forward pass."""</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="NetBase.get_params"><a class="viewcode-back" href="../defs.html#main.NetBase.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorType</span><span class="p">:</span>
+<div class="viewcode-block" id="NetBase.get_params"><a class="viewcode-back" href="../defs.html#main.NetBase.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorType</span><span class="p">:</span>
         <span class="sd">"""Placeholder method for fetching a subset of the net's parameters.</span>
 
 <span class="sd">        It should take an argument that can specify which parameters to select</span>
@@ -490,13 +529,13 @@
 <span class="sd">                            nn.Softmax(dim=1)</span>
 <span class="sd">                        )</span>
 
-<span class="sd">                    def get_params(self, params: int = None) -&gt; GeneratorType:</span>
-<span class="sd">                        if params == 1:</span>
+<span class="sd">                    def get_params(self, params: str = None) -&gt; GeneratorType:</span>
+<span class="sd">                        if params == '1':</span>
 <span class="sd">                            for parameter in self.conv_net_1.parameters():</span>
 <span class="sd">                                yield parameter</span>
 <span class="sd">                            for parameter in self.lin_net_1.parameters():</span>
 <span class="sd">                                yield parameter</span>
-<span class="sd">                        elif params == 2:</span>
+<span class="sd">                        elif params == '2':</span>
 <span class="sd">                            for parameter in self.conv_net_2.parameters():</span>
 <span class="sd">                                yield parameter</span>
 <span class="sd">                            for parameter in self.lin_net_2.parameters():</span>
@@ -519,6 +558,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainclass</span><span class="o">.</span><span class="n">manager</span></div>
 
 <div class="viewcode-block" id="DatasetBase"><a class="viewcode-back" href="../defs.html#main.DatasetBase">[docs]</a><span class="k">class</span> <span class="nc">DatasetBase</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="sd">"""Base class for storing datasets that can be readily used for training.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        inputs: A list that contains the networks' inputs.</span>
+<span class="sd">            All pre-treatment must done before-hand.</span>
+<span class="sd">        output: A list that contains the expected outputs for training or</span>
+<span class="sd">            validation. They should also be ready to be read by the loss</span>
+<span class="sd">            function to be used.</span>
+
+<span class="sd">    """</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -526,7 +575,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
@@ -536,12 +584,9 @@
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">output</span>
 
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DatasetBase.report"><a class="viewcode-back" href="../defs.html#main.DatasetBase.report">[docs]</a>    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""See :func:`report`."""</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s1">''</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"TRAINING DATASET"</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"VALIDATION DATASET"</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="p">():</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Arguments:</span><span class="se">\n</span><span class="s2">"</span>
@@ -553,16 +598,16 @@
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
 
-        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Number of data points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Number of data points: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Representation:</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-        <span class="k">return</span> <span class="n">string</span></div>
+        <span class="k">return</span> <span class="n">string</span></div></div>
 
 <div class="viewcode-block" id="TrainingClass"><a class="viewcode-back" href="../defs.html#main.TrainingClass">[docs]</a><span class="k">class</span> <span class="nc">TrainingClass</span><span class="p">:</span>
-    <span class="sd">"""Class for storing training information</span>
+    <span class="sd">"""Class for storing training information.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        train_list: List of :class:`~ConvBotV2.TrainingClass.TrainData`</span>
+<span class="sd">        train_list: List of :class:`TrainingClass.TrainData`</span>
 <span class="sd">            objects with the data for each individual training.</span>
 <span class="sd">        nb_epochs: Total number of epochs completed (int).</span>
 <span class="sd">        train_error: Training Error for each epoch (Tensor).</span>
@@ -571,16 +616,15 @@
 <span class="sd">        valid_accur: Validation Accuracy for each epoch (Tensor).</span>
 <span class="sd">        state_dict_list: A list with the state_dict of each epoch.</span>
 <span class="sd">        best_epoch: The number of the best epoch (int).</span>
-<span class="sd">        best_state: The best state_dict (TODO: must be improved, as of know</span>
-<span class="sd">            it only takes the last training into account, which excludes</span>
-<span class="sd">            the rest of the nets parameters...).</span>
-<span class="sd">        report_dir: The report directory where all the trianing information</span>
-<span class="sd">            is stored.</span>
+<span class="sd">        best_state: The best state_dict out of all training epochs</span>
+<span class="sd">            (collections.OrderedDict).</span>
+<span class="sd">        manager: The :class:`ReportManager` class that manages the model's</span>
+<span class="sd">            report folder.</span>
+
 <span class="sd">    """</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Class initialization</span>
-<span class="sd">        """</span>
+        <span class="sd">"""Class initialization"""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">train_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_epochs</span> <span class="o">=</span> <span class="mi">0</span>
@@ -602,7 +646,7 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
 
-<div class="viewcode-block" id="TrainingClass.add_training"><a class="viewcode-back" href="../defs.html#main.TrainingClass.add_training">[docs]</a>    <span class="k">def</span> <span class="nf">add_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TrainingClass.add_training"><a class="viewcode-back" href="../defs.html#main.TrainingClass.add_training">[docs]</a>    <span class="k">def</span> <span class="nf">add_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""Adds a :class:`TrainingClass.TrainData` object to</span>
 <span class="sd">            the train_list attribute.</span>
 
@@ -614,13 +658,13 @@
 <span class="sd">            file_name: The file_name picked for the training.</span>
 
 <span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TrainData</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TrainData</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="TrainingClass.finish_training"><a class="viewcode-back" href="../defs.html#main.TrainingClass.finish_training">[docs]</a>    <span class="k">def</span> <span class="nf">finish_training</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TrainingClass.finish_training"><a class="viewcode-back" href="../defs.html#main.TrainingClass.finish_training">[docs]</a>    <span class="k">def</span> <span class="nf">finish_training</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Method for adapting the class' attributes after training.</span>
 
 <span class="sd">        This adds the last training's data to the rest of the training</span>
-<span class="sd">        data, updating the best epoch and state_dict (TODO: improve it).</span>
+<span class="sd">        data, updating the best epoch and state_dict.</span>
 
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">finish_training</span><span class="p">()</span>
@@ -644,7 +688,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">best_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">best_state</span></div>
 
 <div class="viewcode-block" id="TrainingClass.plot"><a class="viewcode-back" href="../defs.html#main.TrainingClass.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-             <span class="n">var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'error'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+             <span class="n">var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'error'</span><span class="p">):</span>
         <span class="sd">"""Plots training or accuracy graphs for all trainings.</span>
 
 <span class="sd">        Args:</span>
@@ -715,27 +759,13 @@
 
         <span class="k">return</span> <span class="n">string</span></div>
 
-    <span class="k">def</span> <span class="nf">remove_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Deleting the Epochs folder:</span>
-        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">'.//</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/Epochs/'</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="c1"># Only take into account the Epoch ones (just to be safe)</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Epoch_\d</span><span class="si">{1}</span><span class="s1">'</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s1">'.//</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/Epochs/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-        <span class="c1"># Remove the empty directory altogether:</span>
-        <span class="c1"># os.rmdir(f'.//{self.path}/Epochs')</span>
-
 <div class="viewcode-block" id="TrainingClass.TrainData"><a class="viewcode-back" href="../defs.html#main.TrainingClass.TrainData">[docs]</a>    <span class="k">class</span> <span class="nc">TrainData</span><span class="p">:</span>
         <span class="sd">"""An object for storing information of one particular training.</span>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            Some of the attributes listed below are defined during</span>
-<span class="sd">            initalization as lists, but become Tensors when the</span>
-<span class="sd">            :func:`~ConvBotV2.TrainingClass.TrainData.finish_training`</span>
-<span class="sd">            method is called.</span>
+<span class="sd">            initialization as lists, but become Tensors when the</span>
+<span class="sd">            :func:`~TrainingClass.TrainData.finish_training` method is called.</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            train_error: Training Error for each epoch (Tensor).</span>
@@ -745,18 +775,19 @@
 <span class="sd">            state_dict_list: A list with the state_dict of each epoch.</span>
 <span class="sd">            comment: A string with a possible comment to be added to the</span>
 <span class="sd">                training report. In particular, when the training is</span>
-<span class="sd">                stopped by the user through a KeyboardInterrupt.</span>
+<span class="sd">                pruned by the user through a ``KeyboardInterrupt``.</span>
 <span class="sd">            best_epoch: The number of the best epoch (int).</span>
-<span class="sd">            best_state: The best state_dict.</span>
-<span class="sd">            nb_epochs: Number of epochs for training.</span>
-<span class="sd">            learning_rate: Learning Rate.</span>
-<span class="sd">            params: The network to train.</span>
+<span class="sd">            best_state: The best state_dict (collections.OrderedDict).</span>
+<span class="sd">            nb_epochs: Number of epochs for training (int).</span>
+<span class="sd">            learning_rate: Learning Rate (float).</span>
 <span class="sd">            loss_fn: The Loss Function used.</span>
 <span class="sd">            file_name: The file_name picked for the training.</span>
 
 <span class="sd">        """</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_epochs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                     <span class="n">loss_fn</span><span class="p">:</span> <span class="s1">'nn.Loss'</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">''</span><span class="p">):</span>
+
             <span class="sd">"""Initializes the class.</span>
 
 <span class="sd">            Keyword Args:</span>
@@ -775,9 +806,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">best_epoch</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">best_state</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb_epochs</span> <span class="o">=</span> <span class="n">nb_epochs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">file_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
 
         <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_error</span><span class="p">)</span>
@@ -808,7 +841,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">state_dict_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
             <span class="k">if</span> <span class="n">comment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>    <span class="c1"># str() just to avoid problems.</span></div>
 
 <div class="viewcode-block" id="TrainingClass.TrainData.finish_training"><a class="viewcode-back" href="../defs.html#main.TrainingClass.TrainData.finish_training">[docs]</a>        <span class="k">def</span> <span class="nf">finish_training</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">"""Method for adapting the class' attributes after training.</span>
@@ -837,8 +870,11 @@
             <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">Number of Epochs: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_error</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> \
                      <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">Learning Rate: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> \
                      <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">Loss Function: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> \
-                     <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">File Name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> \
+                     <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">File Name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> \
                      <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">Best Epoch: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_epoch</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">+=</span> \
+                     <span class="sa">f</span><span class="s1">'</span><span class="se">\t\t</span><span class="s1">Comment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
 
             <span class="k">return</span> <span class="n">string</span></div></div></div>
 
@@ -967,6 +1003,21 @@
             <span class="n">filename</span> <span class="o">+=</span> <span class="s1">'.txt'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReportManager.remove_epochs"><a class="viewcode-back" href="../defs.html#main.ReportManager.remove_epochs">[docs]</a>    <span class="k">def</span> <span class="nf">remove_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Removes the epoch state-dicts in the Epochs folder after training.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Deleting the Epochs folder:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">'.//</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/Epochs/'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># Only take into account the Epoch ones (just to be safe)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Epoch_\d</span><span class="si">{1}</span><span class="s1">'</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s1">'.//</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/Epochs/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+        <span class="c1"># Remove the empty directory altogether:</span>
+        <span class="c1"># os.rmdir(f'.//{self.path}/Epochs')</span>
 
 <div class="viewcode-block" id="ReportManager.File"><a class="viewcode-back" href="../defs.html#main.ReportManager.File">[docs]</a>    <span class="k">class</span> <span class="nc">File</span><span class="p">:</span>
         <span class="sd">"""Class for creating text report files when entered.</span>

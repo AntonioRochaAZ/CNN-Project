@@ -1,7 +1,7 @@
 import torch as th
 import torch.nn as nn
 import decorators
-from typing import Tuple
+from typing import Tuple, Union
 from types import GeneratorType
 from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
@@ -15,18 +15,13 @@ import re
 Tensor = th.Tensor
 
 # Functions:
-def report(cls_instance) -> str:
-    try:
-        return cls_instance.report()
-    except AttributeError:
-        return f"{str(cls_instance)}\n{repr(cls_instance)}"
-
 @decorators.timer
 def train_model(
         model: 'NetBase', nb_epochs: int, learning_rate: float,
         loss_fn: 'nn.Loss', loader_tuple: Tuple[DataLoader, DataLoader],
-        params: GeneratorType = None, print_bool: bool = True,
-        remove_bool: bool = True):
+        params: Union[GeneratorType, str] = None, print_bool: bool = True,
+        remove_bool: bool = True, comment: str = ''):
+
     """Function for training a :class:`NetBase` model.
 
     This function will create a folder with reports about the training and the
@@ -42,19 +37,25 @@ def train_model(
         nb_epochs: Number of epochs for training.
         learning_rate: The learning rate.
         loader_tuple: (training, validation) DataLoader objects.
-        params: The specific parameters that should be trained, if different
-            from the whole network. For this, the model has to have a
-            :func:`~NetBase.get_params` method defined to fetch the correct
-            parameters.
+        params: Either the specific parameters that should be trained, if
+            different from the whole network, or the ``params`` argument for
+            the model's :func:`~NetBase.get_params` method. The latter use is
+            recommended, since in this case the ``params`` information will be
+            able to be integrated to the training report.
         loss_fn: The Loss Function to use.
         remove_bool: If we want to delete the Epoch files after the training
             is complete.
         print_bool: If we want to print some information during training.
+        comment: A comment to add to the training report.
 
     """
 
     if params is None:
         params = model.parameters()
+    else:
+        if not isinstance(params, GeneratorType):
+            comment += f"Parameter argument: {params}, type: {type(params)}.\n"
+            params = model.get_params(params)
 
     optimizer = th.optim.Adam(params, lr=learning_rate)
 
@@ -85,8 +86,7 @@ def train_model(
         )
 
     model.trainclass.add_training(
-        nb_epochs=nb_epochs, learning_rate=learning_rate, # params=params,
-        loss_fn=loss_fn, file_name=str(datetime.today())
+        nb_epochs, learning_rate, loss_fn, str(datetime.today()), comment
     )
 
     try:
@@ -162,7 +162,7 @@ def train_model(
 
             model.trainclass.train_list[-1].add_epoch(
                 (train_error[epoch], valid_error[epoch]),
-                (train_accur[epoch], valid_accur[epoch]), model.state_dict()
+                (train_accur[epoch], valid_accur[epoch]), model.state_dict(),
             )
 
     except KeyboardInterrupt:
@@ -184,7 +184,7 @@ def train_model(
     model.load_state_dict(model.trainclass.train_list[-1].best_state)
 
     if remove_bool:
-        model.trainclass.remove_epochs()
+        manager.remove_epochs()
 
     with manager('TrainingReport.txt', 'w') as f:
         f.write(report(model.trainclass))
@@ -196,6 +196,29 @@ def train_model(
     model = model.to(th.device('cpu'))
     with open(f'{manager.path}/best_model.pkl', 'wb') as f:
         pickle.dump(model, f)
+
+def report(cls_instance) -> str:
+    """Function for creating a report about an object.
+
+    Returns a string that should describe all of the information needed to
+    initialize an identical class. It should also contain complementary
+    information that may be useful to the user. This function in itself only
+    calls the class's ``report`` method, but if none is defined, it will return
+    a string with information about the object.
+
+    The classes' ``report`` method shouldn't have any arguments.
+
+    Args:
+        cls_instance: The class instance we want to make a report of.
+
+    Returns:
+        A string with the report.
+
+    """
+    try:
+        return cls_instance.report()
+    except AttributeError:
+        return f"{str(cls_instance)}\n{repr(cls_instance)}"
 
 class NetBase(nn.Module):
     """Base class for neural networks.
@@ -217,6 +240,15 @@ class NetBase(nn.Module):
         manager: A shortcut for ``self.trainclass.manager``, which is the
             model's :class:`ReportManager`, that stores information about the
             report folder where the model's information is saved.
+
+            .. note::
+                **Why define the model's manager inside of its TrainingClass?**
+
+                This is because a few of :class:`TrainingClass`'s methods use paths that
+                are stored in the model's :class:`ReportManager`. If the ReportManager
+                was outside it, these paths would have to be redefined inside of the
+                training class, which is redundant, and may pose a problem if the user
+                ever decides or has to change the report folder paths.
 
     """
 
@@ -267,7 +299,7 @@ class NetBase(nn.Module):
         """The model's forward pass."""
         return None
 
-    def get_params(self, params) -> GeneratorType:
+    def get_params(self, params: str) -> GeneratorType:
         """Placeholder method for fetching a subset of the net's parameters.
 
         It should take an argument that can specify which parameters to select
@@ -301,13 +333,13 @@ class NetBase(nn.Module):
                             nn.Softmax(dim=1)
                         )
 
-                    def get_params(self, params: int = None) -> GeneratorType:
-                        if params == 1:
+                    def get_params(self, params: str = None) -> GeneratorType:
+                        if params == '1':
                             for parameter in self.conv_net_1.parameters():
                                 yield parameter
                             for parameter in self.lin_net_1.parameters():
                                 yield parameter
-                        elif params == 2:
+                        elif params == '2':
                             for parameter in self.conv_net_2.parameters():
                                 yield parameter
                             for parameter in self.lin_net_2.parameters():
@@ -330,6 +362,16 @@ class NetBase(nn.Module):
         return self.trainclass.manager
 
 class DatasetBase(Dataset):
+    """Base class for storing datasets that can be readily used for training.
+
+    Attributes:
+        inputs: A list that contains the networks' inputs.
+            All pre-treatment must done before-hand.
+        output: A list that contains the expected outputs for training or
+            validation. They should also be ready to be read by the loss
+            function to be used.
+
+    """
     
     def __init__(self, *args, **kwargs):
         super(DatasetBase, self).__init__()
@@ -337,7 +379,6 @@ class DatasetBase(Dataset):
         self.kwargs = kwargs
         self.inputs = None
         self.output = None
-        self.train = None
 
     def __len__(self):
         return len(self.inputs)
@@ -348,11 +389,8 @@ class DatasetBase(Dataset):
         return inputs, output
 
     def report(self):
+        """See :func:`report`."""
         string = ''
-        if self.train:
-            string += "TRAINING DATASET"
-        else:
-            string += "VALIDATION DATASET"
 
         if not self.args == ():
             string += f"Arguments:\n"
@@ -364,16 +402,16 @@ class DatasetBase(Dataset):
             for key in self.kwargs:
                 string += f"\t{key}: {self.kwargs[key]}\n"
 
-        string += f"Number of data points: {len(self)}"
+        string += f"Number of data points: {len(self)}\n"
         string += f"Representation:\n"
         string += f"{repr(self)}"
         return string
 
 class TrainingClass:
-    """Class for storing training information
+    """Class for storing training information.
 
     Attributes:
-        train_list: List of :class:`~ConvBotV2.TrainingClass.TrainData`
+        train_list: List of :class:`TrainingClass.TrainData`
             objects with the data for each individual training.
         nb_epochs: Total number of epochs completed (int).
         train_error: Training Error for each epoch (Tensor).
@@ -382,16 +420,15 @@ class TrainingClass:
         valid_accur: Validation Accuracy for each epoch (Tensor).
         state_dict_list: A list with the state_dict of each epoch.
         best_epoch: The number of the best epoch (int).
-        best_state: The best state_dict (TODO: must be improved, as of know
-            it only takes the last training into account, which excludes
-            the rest of the nets parameters...).
-        report_dir: The report directory where all the trianing information
-            is stored.
+        best_state: The best state_dict out of all training epochs
+            (collections.OrderedDict).
+        manager: The :class:`ReportManager` class that manages the model's
+            report folder.
+
     """
 
     def __init__(self, **kwargs):
-        """Class initialization
-        """
+        """Class initialization"""
 
         self.train_list = []
         self.nb_epochs = 0
@@ -413,7 +450,7 @@ class TrainingClass:
     def __str__(self) -> str:
         return self.report()
 
-    def add_training(self, **kwargs):
+    def add_training(self, *args, **kwargs):
         """Adds a :class:`TrainingClass.TrainData` object to
             the train_list attribute.
 
@@ -425,13 +462,13 @@ class TrainingClass:
             file_name: The file_name picked for the training.
 
         """
-        self.train_list.append(self.TrainData(**kwargs))
+        self.train_list.append(self.TrainData(*args, **kwargs))
 
-    def finish_training(self) -> None:
+    def finish_training(self):
         """Method for adapting the class' attributes after training.
 
         This adds the last training's data to the rest of the training
-        data, updating the best epoch and state_dict (TODO: improve it).
+        data, updating the best epoch and state_dict.
 
         """
         self.train_list[-1].finish_training()
@@ -455,7 +492,7 @@ class TrainingClass:
         self.best_state = self.train_list[-1].best_state
 
     def plot(self, save_bool: bool = False, block: bool = False,
-             var: str = 'error') -> None:
+             var: str = 'error'):
         """Plots training or accuracy graphs for all trainings.
 
         Args:
@@ -526,27 +563,13 @@ class TrainingClass:
 
         return string
 
-    def remove_epochs(self):
-        # Deleting the Epochs folder:
-        files = os.listdir(f'.//{self.manager.path}/Epochs/')
-        for file in files:
-            # Only take into account the Epoch ones (just to be safe)
-            match = re.search(r'Epoch_\d{1}', file)
-            if match is None:
-                continue
-            else:
-                os.remove(f'.//{self.manager.path}/Epochs/{file}')
-        # Remove the empty directory altogether:
-        # os.rmdir(f'.//{self.path}/Epochs')
-
     class TrainData:
         """An object for storing information of one particular training.
 
         .. note::
             Some of the attributes listed below are defined during
-            initalization as lists, but become Tensors when the
-            :func:`~ConvBotV2.TrainingClass.TrainData.finish_training`
-            method is called.
+            initialization as lists, but become Tensors when the
+            :func:`~TrainingClass.TrainData.finish_training` method is called.
 
         Attributes:
             train_error: Training Error for each epoch (Tensor).
@@ -556,18 +579,19 @@ class TrainingClass:
             state_dict_list: A list with the state_dict of each epoch.
             comment: A string with a possible comment to be added to the
                 training report. In particular, when the training is
-                stopped by the user through a KeyboardInterrupt.
+                pruned by the user through a ``KeyboardInterrupt``.
             best_epoch: The number of the best epoch (int).
-            best_state: The best state_dict.
-            nb_epochs: Number of epochs for training.
-            learning_rate: Learning Rate.
-            params: The network to train.
+            best_state: The best state_dict (collections.OrderedDict).
+            nb_epochs: Number of epochs for training (int).
+            learning_rate: Learning Rate (float).
             loss_fn: The Loss Function used.
             file_name: The file_name picked for the training.
 
         """
 
-        def __init__(self, **kwargs):
+        def __init__(self, nb_epochs: int, learning_rate: float,
+                     loss_fn: 'nn.Loss', file_name: str, comment: str = ''):
+
             """Initializes the class.
 
             Keyword Args:
@@ -586,9 +610,11 @@ class TrainingClass:
             self.comment = None
             self.best_epoch = None
             self.best_state = None
-
-            for key in kwargs:
-                setattr(self, key, kwargs[key])
+            self.nb_epochs = nb_epochs
+            self.learning_rate = learning_rate,
+            self.loss_fn = loss_fn
+            self.filename = file_name
+            self.comment = comment
 
         def __len__(self) -> int:
             return len(self.train_error)
@@ -619,7 +645,7 @@ class TrainingClass:
             self.state_dict_list.append(
                 {k: v.cpu() for k, v in state_dict.items()})
             if comment is not None:
-                self.comment = comment
+                self.comment += str(comment)    # str() just to avoid problems.
 
         def finish_training(self) -> None:
             """Method for adapting the class' attributes after training.
@@ -648,8 +674,11 @@ class TrainingClass:
             string = f'\t\tNumber of Epochs: {len(self.train_error)}\n' \
                      f'\t\tLearning Rate: {self.learning_rate}\n' \
                      f'\t\tLoss Function: {self.loss_fn}\n' \
-                     f'\t\tFile Name: {self.file_name}\n' \
+                     f'\t\tFile Name: {self.filename}\n' \
                      f'\t\tBest Epoch: {self.best_epoch}\n'
+            if self.comment != '':
+                string += \
+                     f'\t\tComment: {self.comment}\n'
 
             return string
 
@@ -778,6 +807,21 @@ class ReportManager:
             filename += '.txt'
         self.files.add(filename)
         return self.File(filename, method, self.report_dir, self.dirname)
+
+    def remove_epochs(self):
+        """Removes the epoch state-dicts in the Epochs folder after training.
+        """
+        # Deleting the Epochs folder:
+        files = os.listdir(f'.//{self.path}/Epochs/')
+        for file in files:
+            # Only take into account the Epoch ones (just to be safe)
+            match = re.search(r'Epoch_\d{1}', file)
+            if match is None:
+                continue
+            else:
+                os.remove(f'.//{self.path}/Epochs/{file}')
+        # Remove the empty directory altogether:
+        # os.rmdir(f'.//{self.path}/Epochs')
 
     class File:
         """Class for creating text report files when entered.

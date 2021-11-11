@@ -61,6 +61,11 @@ contains some things I have completed and others that I still want to complete.
     ``main.ReportManager`` class specifically to deal with creating model
     reports, something I already used to do in a more manual way before.
 
+- [WIP] Switch to
+  `Google's Style <https://google.github.io/styleguide/pyguide.html>`_
+
+    Working on it!
+
 - [WIP] Write a complete documentation with Sphinx.
 
     I have already worked with Sphinx in the past and personally loved it.
@@ -72,7 +77,7 @@ contains some things I have completed and others that I still want to complete.
     same folder).
 
 - Try to use `PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
-  `PyTorch_Xla <https://github.com/pytorch/xla/>`_ for accelerating training
+  `PyTorch/XLA <https://github.com/pytorch/xla/>`_ for accelerating training
   using cloud multi-core TPUs (in GoogleColab).
 
     Despite knowing how to use GoogleColab's GPUs for accelerating PyTorch code,
