@@ -5,7 +5,7 @@
 import pygame, sys
 from datasets import *
 
-with open('.//_Reports/2021-11-10 13_24_51.757390/best_model.pkl', 'rb') as f:
+with open('.//_Reports/TwoLayerTestNew/best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 resize = transforms.Resize((32, 32))
@@ -17,7 +17,7 @@ pygame.init()
 pygame.display.set_caption('game base')
 screen = pygame.display.set_mode((640, 640), 0, 32)
 
-img = pygame.image.load('pic.png').convert()
+# img = pygame.image.load('pic.png').convert()
 
 offset = [0, 0]
 
@@ -99,6 +99,8 @@ while True:
     pygame.draw.circle(screen, (255, 255, 255), (loc[0], loc[1]), radius)
     pygame.image.save(screen, ".//_Data/pyimage.jpg")
     img = Image.open(".//_Data/pyimage.jpg")
-    index = int(th.argmax(model(grayscale(img_to_tsr(resize(img))).view(1, 1, 32, 32))))
+    tsr = grayscale(img_to_tsr(resize(img))) - 0.5
+    index = int(th.argmax(model(tsr.view(1, 1, 32, 32))))
+    # plt.imshow(tsr.view(32, 32).detach())
     print(index, HASYv2Dataset.latex_dict[index])
     mainClock.tick(60)
