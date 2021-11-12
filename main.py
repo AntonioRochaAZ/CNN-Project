@@ -418,7 +418,6 @@ class TrainingClass:
         valid_error: Validation Error for each epoch (Tensor).
         train_accur: Training Accuracy for each epoch (Tensor).
         valid_accur: Validation Accuracy for each epoch (Tensor).
-        state_dict_list: A list with the state_dict of each epoch.
         best_epoch: The number of the best epoch (int).
         best_state: The best state_dict out of all training epochs
             (collections.OrderedDict).
@@ -426,6 +425,10 @@ class TrainingClass:
             report folder.
 
     """
+
+    default_dict = {
+        "keep_state_dicts": False
+    }
 
     def __init__(self, **kwargs):
         """Class initialization"""
@@ -436,9 +439,12 @@ class TrainingClass:
         self.valid_error = th.Tensor([])
         self.train_accur = th.Tensor([])
         self.valid_accur = th.Tensor([])
-        self.state_dict_list = []
         self.best_epoch = None
         self.best_state = None
+        self.dict = TrainingClass.default_dict
+        for key in kwargs:
+            if key in self.dict:
+                self.dict[key] = kwargs[key]
         self.manager = ReportManager(**kwargs)
 
     def __getitem__(self, item) -> 'TrainingClass.TrainData':
@@ -482,14 +488,12 @@ class TrainingClass:
                                    self.train_list[-1].train_accur]).detach()
         self.valid_accur = th.cat([self.valid_accur,
                                    self.train_list[-1].valid_accur]).detach()
-
-        for state_dict in self.train_list[-1].state_dict_list:
-            self.state_dict_list.append(state_dict)
-
         self.best_epoch = self.train_list[-1].best_epoch + \
             self.nb_epochs - len(self.train_list[-1].train_error)
 
         self.best_state = self.train_list[-1].best_state
+        if not self.dict["keep_state_dicts"]:
+            self.train_list[-1].state_dict_list = []
 
     def plot(self, save_bool: bool = False, block: bool = False,
              var: str = 'error'):
@@ -613,7 +617,7 @@ class TrainingClass:
             self.nb_epochs = nb_epochs
             self.learning_rate = learning_rate,
             self.loss_fn = loss_fn
-            self.filename = file_name
+            self.file_name = file_name
             self.comment = comment
 
         def __len__(self) -> int:
@@ -674,7 +678,7 @@ class TrainingClass:
             string = f'\t\tNumber of Epochs: {len(self.train_error)}\n' \
                      f'\t\tLearning Rate: {self.learning_rate}\n' \
                      f'\t\tLoss Function: {self.loss_fn}\n' \
-                     f'\t\tFile Name: {self.filename}\n' \
+                     f'\t\tFile Name: {self.file_name}\n' \
                      f'\t\tBest Epoch: {self.best_epoch}\n'
             if self.comment != '':
                 string += \
