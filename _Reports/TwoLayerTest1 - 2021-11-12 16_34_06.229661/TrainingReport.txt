@@ -1,0 +1,61 @@
+Overall Training Report: TwoLayerTest1 - 2021-11-12 16_34_06.229661
+	Number of Trainings: 6
+	Total Number of Epochs: 60
+	Best Epoch: 57
+
+Training Information:
+	Training 0: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-12 16:34:06.275765
+		Best Epoch: 9
+
+	Comment: 
+
+ 	Training 1: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-12 18:01:46.924770
+		Best Epoch: 9
+
+	Comment: 
+
+ 	Training 2: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-12 19:27:33.051191
+		Best Epoch: 6
+
+	Comment: 
+
+ 	Training 3: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-13 18:46:56.221886
+		Best Epoch: 8
+
+	Comment: 
+
+ 	Training 4: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-13 20:15:26.008047
+		Best Epoch: 9
+
+	Comment: 
+
+ 	Training 5: ------------------------
+		Number of Epochs: 10
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2021-11-13 20:37:29.226710
+		Best Epoch: 7
+
+	Comment: 
+
+ 
