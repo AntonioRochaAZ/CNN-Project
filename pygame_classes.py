@@ -10,13 +10,13 @@ class Button:
         self.size = size
         self.font = pygame.font.SysFont("timesnewroman", font)
         if feedback == "":
-            self.feedback = "text"
+            self.feedback = text
         else:
             self.feedback = feedback
         self.bg = bg
         self.change_text(text, bg)
 
-    def change_text(self, text, bg: str = None):
+    def change_text(self, text: str, bg: str = None):
         """Change the text whe you click"""
         if bg is None:
             bg = self.bg
@@ -30,8 +30,9 @@ class Button:
         ))
         self.rect = pygame.Rect(self.x, self.y, self.size[0], self.size[1])
 
-    def show(self, screen: pygame.display, button: 'Button'):
-        screen.blit(button.surface, (self.x, self.y))
+    # def show(self, screen: pygame.display, button: 'Button'):
+    def show(self, screen: pygame.display):
+        screen.blit(self.surface, (self.x, self.y))
 
     def click(self, event):
         x, y = pygame.mouse.get_pos()
@@ -39,3 +40,6 @@ class Button:
             if pygame.mouse.get_pressed()[0]:
                 if self.rect.collidepoint(x, y):
                     self.change_text(self.feedback, bg="red")
+                    return True
+
+        return False
