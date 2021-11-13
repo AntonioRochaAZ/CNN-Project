@@ -10,6 +10,7 @@ import os
 from datetime import datetime
 import pickle
 import re
+from warnings import warn
 
 # For typing:
 Tensor = th.Tensor
@@ -20,7 +21,7 @@ def train_model(
         model: 'NetBase', nb_epochs: int, learning_rate: float,
         loss_fn: 'nn.Loss', loader_tuple: Tuple[DataLoader, DataLoader],
         params: Union[GeneratorType, str] = None, print_bool: bool = True,
-        remove_bool: bool = True, comment: str = ''):
+        remove_bool: bool = True, comment: str = None):
 
     """Function for training a :class:`NetBase` model.
 
@@ -36,16 +37,17 @@ def train_model(
         model: The actual network to be trained.
         nb_epochs: Number of epochs for training.
         learning_rate: The learning rate.
+        loss_fn: The Loss Function to use.
         loader_tuple: (training, validation) DataLoader objects.
         params: Either the specific parameters that should be trained, if
             different from the whole network, or the ``params`` argument for
             the model's :func:`~NetBase.get_params` method. The latter use is
             recommended, since in this case the ``params`` information will be
             able to be integrated to the training report.
-        loss_fn: The Loss Function to use.
+        print_bool: If we want to print training and validation errors during
+            iterations.
         remove_bool: If we want to delete the Epoch files after the training
             is complete.
-        print_bool: If we want to print some information during training.
         comment: A comment to add to the training report.
 
     """
@@ -54,7 +56,13 @@ def train_model(
         params = model.parameters()
     else:
         if not isinstance(params, GeneratorType):
-            comment += f"Parameter argument: {params}, type: {type(params)}.\n"
+            if comment is None:
+                comment = ''
+            else:
+                comment += '\n\t\t\t'
+            comment += f"Parameter argument: {params}, type: {type(params)}." \
+                       f"\n\t\t\t"
+
             params = model.get_params(params)
 
     optimizer = th.optim.Adam(params, lr=learning_rate)
@@ -86,8 +94,10 @@ def train_model(
         )
 
     model.trainclass.add_training(
-        nb_epochs, learning_rate, loss_fn, str(datetime.today()), comment
+        nb_epochs, learning_rate, loss_fn, str(datetime.today())
     )
+    if comment is not None:
+        model.trainclass.train_list[-1].add_comment(comment)
 
     try:
         # TRAINING LOOP
@@ -175,8 +185,10 @@ def train_model(
 
         model.trainclass.train_list[-1].add_epoch(
             (train_error[epoch2], valid_error[epoch2]),
-            (train_accur[epoch2], valid_accur[epoch2]), model.state_dict(),
-            f'Pruned at epoch {epoch} by the user.'
+            (train_accur[epoch2], valid_accur[epoch2]), model.state_dict()
+        )
+        model.trainclass.train_list[-1].add_comment(
+            f'Pruned at epoch {epoch} by the user.\n\t\t\t'
         )
 
     # Finding and loading the best epoch:
@@ -203,7 +215,7 @@ def report(cls_instance) -> str:
     Returns a string that should describe all of the information needed to
     initialize an identical class. It should also contain complementary
     information that may be useful to the user. This function in itself only
-    calls the class's ``report`` method, but if none is defined, it will return
+    calls the class's ``report`` method, but, if none is defined, it will return
     a string with information about the object.
 
     The classes' ``report`` method shouldn't have any arguments.
@@ -224,7 +236,7 @@ class NetBase(nn.Module):
     """Base class for neural networks.
 
     This class's definition includes general methods that should be inherited
-    or redefined by the neural networks. It is also recommended the child
+    or redefined by the neural networks. It is also recommended that the child
     classes pass their ``*args`` and ``**kwargs`` when calling ``super``.
 
     Attributes:
@@ -233,8 +245,10 @@ class NetBase(nn.Module):
         is_classifier: A ``bool`` stating whether or not the model is a
             classifier. This is useful for determining whether or not to
             calculate the model's accuracy and a few other things during
-            training. It defaults to False to
-            avoid raising errors in :func:`train_model`.
+            training. It defaults to False to avoid raising errors in
+            :func:`train_model`. It can, of course, be overridden either by the
+            child class or by passing ``is_classifier=True`` as a
+            keyword argument.
         trainclass: The model's associated :class:`TrainingClass`, which stores
             information about its training and report manager.
         manager: A shortcut for ``self.trainclass.manager``, which is the
@@ -244,11 +258,12 @@ class NetBase(nn.Module):
             .. note::
                 **Why define the model's manager inside of its TrainingClass?**
 
-                This is because a few of :class:`TrainingClass`'s methods use paths that
-                are stored in the model's :class:`ReportManager`. If the ReportManager
-                was outside it, these paths would have to be redefined inside of the
-                training class, which is redundant, and may pose a problem if the user
-                ever decides or has to change the report folder paths.
+                This is because a few of :class:`TrainingClass`'s methods use
+                paths that are stored in the model's :class:`ReportManager`.
+                If the ReportManager was outside it, these paths would have to
+                be redefined inside of the training class, which is redundant,
+                and may pose a problem if the user ever decides or has to change
+                the report folder paths.
 
     """
 
@@ -256,13 +271,22 @@ class NetBase(nn.Module):
         super(NetBase, self).__init__()
         self.args = args
         self.kwargs = kwargs
-        self.is_classifier = False
+        if "is_classifier" in kwargs:
+            is_classifier = kwargs["is_classifier"]
+            if not isinstance(is_classifier, bool):
+                raise TypeError(
+                    f'Illegal type for  "is_classifier" attribute: received '
+                    f'{type(is_classifier)}, expected bool.')
+            else:
+                self.is_classifier = kwargs["is_classifier"]
+        else:
+            self.is_classifier = False
         self.trainclass = TrainingClass(**kwargs)
 
     def __str__(self):
         return report(self)
 
-    def report(self):
+    def report(self) -> str:
         """Creates a little report about the network.
 
         Returns a string that should describe all of the information
@@ -295,9 +319,10 @@ class NetBase(nn.Module):
         """
         self.__init__(*self.args, **self.kwargs)
 
-    def forward(self, inputs):
+    def forward(self, inputs: Tensor) -> Tensor:
         """The model's forward pass."""
-        return None
+        raise NotImplementedError(
+            "This net's forward pass hasn't been implemented.")
 
     def get_params(self, params: str) -> GeneratorType:
         """Placeholder method for fetching a subset of the net's parameters.
@@ -365,8 +390,9 @@ class DatasetBase(Dataset):
     """Base class for storing datasets that can be readily used for training.
 
     Attributes:
-        inputs: A list that contains the networks' inputs.
-            All pre-treatment must done before-hand.
+        inputs: A list that contains the networks' inputs, ready to be called by
+            the model. All pre-treatment must done before-hand or during class
+            initialization.
         output: A list that contains the expected outputs for training or
             validation. They should also be ready to be read by the loss
             function to be used.
@@ -377,8 +403,8 @@ class DatasetBase(Dataset):
         super(DatasetBase, self).__init__()
         self.args = args
         self.kwargs = kwargs
-        self.inputs = None
-        self.output = None
+        self.inputs = []
+        self.output = []
 
     def __len__(self):
         return len(self.inputs)
@@ -387,6 +413,9 @@ class DatasetBase(Dataset):
         inputs = self.inputs[item]
         output = self.output[item]
         return inputs, output
+
+    def __str__(self):
+        return self.report()
 
     def report(self):
         """See :func:`report`."""
@@ -403,16 +432,14 @@ class DatasetBase(Dataset):
                 string += f"\t{key}: {self.kwargs[key]}\n"
 
         string += f"Number of data points: {len(self)}\n"
-        string += f"Representation:\n"
-        string += f"{repr(self)}"
         return string
 
 class TrainingClass:
     """Class for storing training information.
 
     Attributes:
-        train_list: List of :class:`TrainingClass.TrainData`
-            objects with the data for each individual training.
+        train_list: List of :class:`TrainingClass.TrainData` objects with the
+            data for each individual training.
         nb_epochs: Total number of epochs completed (int).
         train_error: Training Error for each epoch (Tensor).
         valid_error: Validation Error for each epoch (Tensor).
@@ -421,16 +448,37 @@ class TrainingClass:
         best_epoch: The number of the best epoch (int).
         best_state: The best state_dict out of all training epochs
             (collections.OrderedDict).
+        delete_state_dicts: Whether or not to keep state_dicts from previous
+            **training loops**. Its value indicates how many trainings back we
+            delete. For example: 0 means we don't delete any; 1 we delete the
+            last (meaning we won't keep any); 2 means we delete the second last
+            (we will always keep the last, most recent); 3 means we delete the
+            third last (we'll keep the two most recent) and so on. This is
+            defined by the following lines of code, from this class's
+            :func:`~TrainingClass.finish_training` method:
+
+            .. code-block::
+
+                if del_dicts:
+                    try:
+                        self.train_list[-del_dicts].state_dict_list = []
+                    except IndexError:
+                        pass
+
+            .. attention::
+                Note that this **will not** delete the :class:`TrainData` class
+                for the respective training loop, all of its information is
+                safe. It must also be kept in mind that picking a value
+                :math:`x` greater than one means that all *epochs* from the
+                :math:`x-1` most recent training loops will be kept, not only
+                the last :math:`x-1` epochs from the most recent training loop.
+
         manager: The :class:`ReportManager` class that manages the model's
             report folder.
 
     """
 
-    default_dict = {
-        "keep_state_dicts": False
-    }
-
-    def __init__(self, **kwargs):
+    def __init__(self, delete_state_dicts: int = 1, **kwargs):
         """Class initialization"""
 
         self.train_list = []
@@ -441,10 +489,7 @@ class TrainingClass:
         self.valid_accur = th.Tensor([])
         self.best_epoch = None
         self.best_state = None
-        self.dict = TrainingClass.default_dict
-        for key in kwargs:
-            if key in self.dict:
-                self.dict[key] = kwargs[key]
+        self.delete_state_dicts = delete_state_dicts
         self.manager = ReportManager(**kwargs)
 
     def __getitem__(self, item) -> 'TrainingClass.TrainData':
@@ -456,22 +501,26 @@ class TrainingClass:
     def __str__(self) -> str:
         return self.report()
 
-    def add_training(self, *args, **kwargs):
+    def add_training(self, nb_epochs: int, learning_rate: float,
+                     loss_fn: 'nn.Loss', file_name: str):
         """Adds a :class:`TrainingClass.TrainData` object to
             the train_list attribute.
 
-        Keyword Args:
+        Args:
             nb_epochs: Number of epochs for training.
             learning_rate: Learning Rate.
-            params: The network to train.
             loss_fn: The Loss Function used.
             file_name: The file_name picked for the training.
 
         """
-        self.train_list.append(self.TrainData(*args, **kwargs))
+        if file_name is not None:
+            warn('"file_name" may become deprecated in the future',
+                 FutureWarning)
+        self.train_list.append(
+            self.TrainData(nb_epochs, learning_rate, loss_fn, file_name))
 
     def finish_training(self):
-        """Method for adapting the class' attributes after training.
+        """Method for adapting the class's attributes after training.
 
         This adds the last training's data to the rest of the training
         data, updating the best epoch and state_dict.
@@ -492,18 +541,22 @@ class TrainingClass:
             self.nb_epochs - len(self.train_list[-1].train_error)
 
         self.best_state = self.train_list[-1].best_state
-        if not self.dict["keep_state_dicts"]:
-            self.train_list[-1].state_dict_list = []
+        del_dicts = self.delete_state_dicts
+        if del_dicts:
+            try:
+                self.train_list[-del_dicts].state_dict_list = []
+            except IndexError:
+                pass
 
     def plot(self, save_bool: bool = False, block: bool = False,
              var: str = 'error'):
         """Plots training or accuracy graphs for all trainings.
 
         Args:
-            save_bool: Whether or not to save the graph.
+            save_bool: Whether or not to save the graph as a file.
             block: Whether or not the plotting of the graph should stop
                 the code from continuing.
-            var: Which graph to plot ('error' for the error or 'accur' for
+            var: Which graph to plot ("error" for the error or "accur" for
                 the accuracy).
 
         """
@@ -527,9 +580,8 @@ class TrainingClass:
             plt.ylabel('Accuracy (%)')
             plt.title('Accuracy')
             title = 'accur'
-
         else:
-            raise ValueError(f"Invalid variable name: {var}")
+            raise ValueError(f"Invalid variable name: {var}.")
 
         plt.xlabel('Epoch number')
         plt.legend()
@@ -562,8 +614,6 @@ class TrainingClass:
         for idx, train_data in enumerate(self.train_list):
             string += f'\tTraining {idx}: ------------------------\n'
             string += f'{report(train_data)}\n'
-            if train_data.comment is not None:
-                string += f'\tComment: {train_data.comment}\n\n '
 
         return string
 
@@ -594,11 +644,11 @@ class TrainingClass:
         """
 
         def __init__(self, nb_epochs: int, learning_rate: float,
-                     loss_fn: 'nn.Loss', file_name: str, comment: str = ''):
+                     loss_fn: 'nn.Loss', file_name: str):
 
             """Initializes the class.
 
-            Keyword Args:
+            Args:
                 nb_epochs: Number of epochs for training.
                 learning_rate: Learning Rate.
                 params: The network to train.
@@ -606,19 +656,19 @@ class TrainingClass:
                 file_name: The file_name picked for the training.
 
             """
+            self.nb_epochs = nb_epochs
+            self.learning_rate = learning_rate,
+            self.loss_fn = loss_fn
+            self.file_name = file_name
+
             self.train_error = []
             self.valid_error = []
             self.train_accur = []
             self.valid_accur = []
             self.state_dict_list = []
-            self.comment = None
             self.best_epoch = None
             self.best_state = None
-            self.nb_epochs = nb_epochs
-            self.learning_rate = learning_rate,
-            self.loss_fn = loss_fn
-            self.file_name = file_name
-            self.comment = comment
+            self.comment = None
 
         def __len__(self) -> int:
             return len(self.train_error)
@@ -652,7 +702,7 @@ class TrainingClass:
                 self.comment += str(comment)    # str() just to avoid problems.
 
         def finish_training(self) -> None:
-            """Method for adapting the class' attributes after training.
+            """Method for adapting the class's attributes after training.
 
             This turns training and validation errors and accuracies into a
             tensor (originally lists). As well as defining the best epoch in
@@ -680,11 +730,18 @@ class TrainingClass:
                      f'\t\tLoss Function: {self.loss_fn}\n' \
                      f'\t\tFile Name: {self.file_name}\n' \
                      f'\t\tBest Epoch: {self.best_epoch}\n'
-            if self.comment != '':
+            if self.comment is not None:
                 string += \
-                     f'\t\tComment: {self.comment}\n'
+                     f'\t\tComments: {self.comment}\n'
 
             return string
+
+        def add_comment(self, comment: str):
+            if self.comment is None:
+                self.comment = comment
+            else:
+                self.comment += comment
+
 
 class ReportManager:
     """Class for managing a model's report folder and report files.
@@ -924,3 +981,24 @@ class ReportManager:
             # If we get an exception that can be handled, we can add
             # "return True" for that case.
 
+
+
+if __name__ == '__main__':
+    from datasets import *
+    from nets import *
+
+    device = th.device('cuda:0' if th.cuda.is_available() else 'cpu')
+    print(f"device: {device}")
+    with open('.//_Data/colab_dataset.pkl', 'rb') as f:
+        full_dataset = pickle.load(f)
+
+    fold = 1
+    tds = HASYv2Dataset()
+    vds = HASYv2Dataset()
+    tds = tds.cross_val(fold, True, full_dataset)
+    vds = vds.cross_val(fold, False, full_dataset)
+    del full_dataset  # In order to avoid using all of the available memory
+    model = TwoLayer(dirname='TwoLayerTest')
+    tdl = DataLoader(tds, batch_size=1, shuffle=True)
+    vdl = DataLoader(vds, batch_size=10000)
+    train_model(model, 10, 1e-4, nn.NLLLoss(), (tdl, vdl))
