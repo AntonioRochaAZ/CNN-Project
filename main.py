@@ -1,7 +1,7 @@
 import torch as th
 import torch.nn as nn
 import decorators
-from typing import Tuple, Union
+from typing import Tuple, Union, OrderedDict
 from types import GeneratorType
 from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
@@ -511,6 +511,8 @@ class TrainingClass:
             learning_rate: Learning Rate.
             loss_fn: The Loss Function used.
             file_name: The file_name picked for the training.
+            .. warning::
+                ``file_name`` might become deprecated in the future.
 
         """
         if file_name is not None:
@@ -618,28 +620,38 @@ class TrainingClass:
         return string
 
     class TrainData:
-        """An object for storing information of one particular training.
+        """An object for storing information of one particular training loop.
 
         .. note::
             Some of the attributes listed below are defined during
             initialization as lists, but become Tensors when the
             :func:`~TrainingClass.TrainData.finish_training` method is called.
 
+        Args:
+            nb_epochs: Number of epochs for training.
+            learning_rate: Learning Rate.
+            loss_fn: The Loss Function used.
+            file_name: The file_name picked for the training.
+            .. warning::
+                ``file_name`` might become deprecated in the future.
+
         Attributes:
             train_error: Training Error for each epoch (Tensor).
             valid_error: Validation Error for each epoch (Tensor).
             train_accur: Training Accuracy for each epoch (Tensor).
             valid_accur: Validation Accuracy for each epoch (Tensor).
-            state_dict_list: A list with the state_dict of each epoch.
+            state_dict_list: A list with the state_dict of each epoch. It may
+                be reset after training if the model's associated
+                :class:`TrainingClass` has a ``delete_state_dicts`` attribute
+                with a value different from 0. Check the class's documentation
+                for more information on how this works.
             comment: A string with a possible comment to be added to the
-                training report. In particular, when the training is
-                pruned by the user through a ``KeyboardInterrupt``.
+                training report (through the
+                :func:`~TrainingClass.TrainData.add_comment` method). In
+                particular, when the training is pruned by the user through a
+                ``KeyboardInterrupt``.
             best_epoch: The number of the best epoch (int).
             best_state: The best state_dict (collections.OrderedDict).
-            nb_epochs: Number of epochs for training (int).
-            learning_rate: Learning Rate (float).
-            loss_fn: The Loss Function used.
-            file_name: The file_name picked for the training.
 
         """
 
@@ -677,17 +689,16 @@ class TrainingClass:
             return self.report()
 
         def add_epoch(self, error_tuple: Tuple[Tensor, Tensor],
-                      accur_tuple: Tuple[Tensor, Tensor], state_dict: dict,
-                      comment: str = None) -> None:
+                      accur_tuple: Tuple[Tensor, Tensor],
+                      state_dict: OrderedDict, comment: str = None) -> None:
             """Method for adding an epoch's information to the class.
 
             Args:
                 error_tuple: training and validation errors.
-                accur_tuple: training and validation accuracies
-                    (Tuple[Tensor, Tensor]).
+                accur_tuple: training and validation accuracies.
                 state_dict: The model's current state_dict.
-                comment: A string with a possible comment to be added to
-                    the  training report.
+                comment: A string with a comment to be added to the training
+                    report.
 
             """
             train_error, valid_error = error_tuple
@@ -713,7 +724,7 @@ class TrainingClass:
             self.valid_error = th.cat(self.valid_error)
             self.train_accur = th.cat(self.train_accur)
             self.valid_accur = th.cat(self.valid_accur)
-            best_epoch = th.argmin(self.valid_error).item()
+            best_epoch = int(th.argmin(self.valid_error))
             self.best_epoch = best_epoch
             self.best_state = self.state_dict_list[best_epoch]
 
@@ -736,7 +747,13 @@ class TrainingClass:
 
             return string
 
-        def add_comment(self, comment: str):
+        def add_comment(self, comment: str) -> None:
+            """Adds a comment to the class's comment attribute.
+
+            Args:
+                comment: The comment we want to add.
+
+            """
             if self.comment is None:
                 self.comment = comment
             else:
@@ -789,10 +806,9 @@ class ReportManager:
             name.
 
     """
-    # TODO: add the possibility of changing the report dir etc.
 
     def __init__(self, dirname: str = None, report_dir: str = "_Reports",
-                 complete_path: str = None, **kwargs):
+                 complete_path: str = None):
 
         self.report_dir = report_dir
         if dirname is None:
@@ -868,6 +884,55 @@ class ReportManager:
             filename += '.txt'
         self.files.add(filename)
         return self.File(filename, method, self.report_dir, self.dirname)
+
+    def chdir(self, path: str) -> None:
+        """Changes the report directory according to the informed final path.
+
+        This method may create the necessary directories to reach the path
+        given by the user. If the number of directories that need to be created
+        is greater than two, then the user will be prompted for confirmation.
+
+        Args:
+            path: The path to the final model report folder.
+
+        TODO:
+            Add "timed input" functionality, so the code will continue if the
+            user is AFK and doesn't see the prompt.
+
+        """
+        abs_path = os.path.abspath(path)
+        path_list = abs_path.split("/")
+        dirname = path_list[-1]
+        report_dir = path_list[-2]
+        if os.path.exists(path):
+            os.chdir(abs_path.removesuffix(f"/{report_dir}/{dirname}"))
+            complete_path = os.getcwd()
+        else:
+            complete_path = ""
+            for idx in range(len(path_list) - 2):
+                complete_path += f"{path_list[idx]}/"
+            complete_path = complete_path.removesuffix("/")
+            if os.path.exists(complete_path):
+                os.makedirs(abs_path)
+                os.chdir(complete_path)
+            else:
+                val = ''
+                while val not in ['y', 'n']:
+                    val = input(f"Base path {complete_path} does not exist, "
+                                f"make directories anyway? [y/n]\n"
+                                f"([n] will raise FileNotFoundError).")
+
+                if val == 'y':
+                    os.makedirs(abs_path)
+                    os.chdir(complete_path)
+                else:
+                    raise FileNotFoundError("Report Folder does not exist.")
+
+        self.dirname = dirname
+        self.report_dir = report_dir
+        self.base_path = complete_path
+        self.path = f".//{report_dir}/{dirname}"
+        self.files = set()
 
     def remove_epochs(self):
         """Removes the epoch state-dicts in the Epochs folder after training.
