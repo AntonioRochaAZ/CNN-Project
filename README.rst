@@ -32,6 +32,10 @@ guess it at the same time. The user can then add it live to the LaTeX equation.
 This application idea draws inspiration from Google's
 `Quick, Draw! <https://quickdraw.withgoogle.com/>`_.
 
+Update 14/11/2021: I've found out through a friend that a website already exists
+for this: `http://detexify.kirelabs.org/symbols.html`_. Still, my development
+continues.
+
 .. note::
     In order to work with the dataset on
     `GoogleColab <https://colab.research.google.com/>`_, I've tried uploading
@@ -43,6 +47,29 @@ This application idea draws inspiration from Google's
     need to unzip the dataset (which can be found
     `here <https://zenodo.org/record/259444#.YYwmp73MLUJ>`_) in the
     ``_Data`` folder (creating a ``HASYv2`` folder with all of its contents).
+
+Current State of Development
+----------------------------
+
+.. note::
+    With the return of my classes, development will be slowed down
+    significantly in the next few months.
+
+Base classes and a few models have already been defined, but development is
+hindered by the time it takes to train models. Currently, using Google Colab's
+GPU acceleration, training on one fold takes several hours to complete (which
+basically uses up the daily available GPU runtime). Training a model with all
+10 folds would thus take up to 10 days for each model. Development should thus
+shift to implementations with
+`PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
+`PyTorch/XLA <https://github.com/pytorch/xla/>`_ (see :ref:`Objectives`),
+that could allow for multicore TPU training in Colab, speeding up the process.
+
+In terms of the Pygame implementation (see "pygame-tests" branch), much has yet
+to be done and improved, but the base window is about what I had in mind. I have
+understood a little bit better how Pygame works, which will help in the next
+steps. The text box is still very limited, and I'll be working on it in the
+future.
 
 Objectives
 ----------
@@ -61,6 +88,11 @@ contains some things I have completed and others that I still want to complete.
     ``main.ReportManager`` class specifically to deal with creating model
     reports, something I already used to do in a more manual way before.
 
+- [WIP] Switch to
+  `Google's Style <https://google.github.io/styleguide/pyguide.html>`_
+
+    Working on it!
+
 - [WIP] Write a complete documentation with Sphinx.
 
     I have already worked with Sphinx in the past and personally loved it.
@@ -71,8 +103,12 @@ contains some things I have completed and others that I still want to complete.
     ``_documentation.html`` (you'll need to have the _Sphinx directory in the
     same folder).
 
+- [WIP] Implement an interface for real-time drawing and prediction.
+
+    Development has started using the Pygame module.
+
 - Try to use `PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
-  `PyTorch_Xla <https://github.com/pytorch/xla/>`_ for accelerating training
+  `PyTorch/XLA <https://github.com/pytorch/xla/>`_ for accelerating training
   using cloud multi-core TPUs (in GoogleColab).
 
     Despite knowing how to use GoogleColab's GPUs for accelerating PyTorch code,

@@ -10,6 +10,11 @@ def timer(f: Callable):
         start = time.time()
         out = f(*args, **kwargs)
         delta_t = time.time() - start
-        print(f"Time for running function {f.__name__}: {delta_t}s")
+        hours = delta_t//3600
+        delta_t = delta_t % 3600
+        minutes = delta_t // 60
+        seconds = delta_t % 60
+        print(f"Time for running function {f.__name__}:\n"
+              f"{hours} hours, {minutes} minutes and {seconds} seconds")
         return out
     return wrapper

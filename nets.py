@@ -1,4 +1,5 @@
 from main import *
+import torch.nn as nn
 
 class ConvNetBase(NetBase):
     """Base Class for the Convolutional Networks proposed in the HASYv2 article.

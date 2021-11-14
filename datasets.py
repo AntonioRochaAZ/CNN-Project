@@ -7,6 +7,11 @@ img_to_tsr = transforms.ToTensor()
 grayscale = transforms.Grayscale()
 
 class HASYv2Dataset(DatasetBase):
+    """Dataset class for preparing HASYv2Dataset data for network training.
+
+    Note that initalizing the class won't load the data into it just yet. One
+    of the specialized methods need to be called for that.
+    """
 
     default_paths = {
         "base": './/_Data/HASYv2',
@@ -48,7 +53,21 @@ class HASYv2Dataset(DatasetBase):
         self.output = []
         self.fold = None
 
-    def cross_val(self, fold: int, train: bool, dataset: 'HASYv2Dataset' = None):
+    def cross_val(self, fold: int, train: bool, dataset: "HASYv2Dataset" = None):
+        """Method for loading data from one fold to the dataset class.
+
+        Args:
+            fold: The number of the fold (1 to 10).
+            train: Whether or not we want to load the training or the validation
+                (test) data from the corresponding fold.
+            dataset: Another :class:`HASYv2Dataset` object containing the
+                entirety of the data (generated through the
+                :func:`~HASYv2Dataset.for_colab` method). This is needed when
+                the dataset's individual images are not locally available (like
+                in GoogleDrive). This method will then use this base dataset
+                instead of trying to find the files locally.
+
+        """
 
         self.fold = fold
         self.inputs = []
@@ -82,9 +101,18 @@ class HASYv2Dataset(DatasetBase):
                 self.inputs.append(tsr)
                 self.output.append(label)
 
-        return self
+    def for_colab(self):
+        """Loads the entirety of the dataset into one single class instance.
 
-    def for_colab(self) -> 'HASYv2Dataset':
+        This is useful for passing the complete dataset around without having to
+        move all of the 160,000+ image files. This is of course particularly
+        useful for training models in Google Colab, since uploading the raw
+        dataset to Google Drive has failed several times.
+
+        This function will automatically save the full :class:`HASYv2Dataset`
+        class in the Dataset's base directory (``self.path["base"]``) as
+        "colab_dataset.pkl", a pickle.
+        """
 
         self.inputs = []
         self.output = []
@@ -104,10 +132,9 @@ class HASYv2Dataset(DatasetBase):
             self.inputs.append(tsr)
             self.output.append(label)
 
-        with open('colab_dataset.pkl', 'wb') as f:
+        with open(f"{self.path['base']}/colab_dataset.pkl", 'wb') as f:
             pickle.dump(self, f)
 
-        return self
 
 
 

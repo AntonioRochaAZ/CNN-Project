@@ -198,7 +198,42 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="datasets.HASYv2Dataset">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">datasets.</span></span><span class="sig-name descname"><span class="pre">HASYv2Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasets.html#HASYv2Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasets.HASYv2Dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Dataset class for preparing HASYv2Dataset data for network training.</p>
+<p>Note that initalizing the class won’t load the data into it just yet. One
+of the specialized methods need to be called for that.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasets.HASYv2Dataset.cross_val">
+<span class="sig-name descname"><span class="pre">cross_val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#datasets.HASYv2Dataset" title="datasets.HASYv2Dataset"><span class="pre">datasets.HASYv2Dataset</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasets.html#HASYv2Dataset.cross_val"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasets.HASYv2Dataset.cross_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for loading data from one fold to the dataset class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fold</strong> – The number of the fold (1 to 10).</p></li>
+<li><p><strong>train</strong> – Whether or not we want to load the training or the validation
+(test) data from the corresponding fold.</p></li>
+<li><p><strong>dataset</strong> – Another <a class="reference internal" href="#datasets.HASYv2Dataset" title="datasets.HASYv2Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">HASYv2Dataset</span></code></a> object containing the
+entirety of the data (generated through the
+<a class="reference internal" href="#datasets.HASYv2Dataset.for_colab" title="datasets.HASYv2Dataset.for_colab"><code class="xref py py-func docutils literal notranslate"><span class="pre">for_colab()</span></code></a> method). This is needed when
+the dataset’s individual images are not locally available (like
+in GoogleDrive). This method will then use this base dataset
+instead of trying to find the files locally.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="datasets.HASYv2Dataset.for_colab">
+<span class="sig-name descname"><span class="pre">for_colab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datasets.html#HASYv2Dataset.for_colab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datasets.HASYv2Dataset.for_colab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the entirety of the dataset into one single class instance.</p>
+<p>This is useful for passing the complete dataset around without having to
+move all of the 160,000+ image files. This is of course particularly
+useful for training models in Google Colab, since uploading the raw
+dataset to Google Drive has failed several times.</p>
+<p>This function will automatically save the full <a class="reference internal" href="#datasets.HASYv2Dataset" title="datasets.HASYv2Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">HASYv2Dataset</span></code></a>
+class in the Dataset’s base directory (<code class="docutils literal notranslate"><span class="pre">self.path["base"]</span></code>) as
+“colab_dataset.pkl”, a pickle.</p>
+</dd></dl>
+</dd></dl>
 </div>
 
         </article>

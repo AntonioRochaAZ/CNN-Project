@@ -222,6 +222,9 @@ draw symbols in a 32x32 pixel grid with its mouse, and a trained net will try to
 guess it at the same time. The user can then add it live to the LaTeX equation.
 This application idea draws inspiration from Google’s
 <a class="reference external" href="https://quickdraw.withgoogle.com/">Quick, Draw!</a>.</p>
+<p>Update 14/11/2021: I’ve found out through a friend that a website already exists
+for this: <a href="#id3"><span class="problematic" id="id4">`http://detexify.kirelabs.org/symbols.html`_</span></a>. Still, my development
+continues.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In order to work with the dataset on
@@ -235,6 +238,28 @@ need to unzip the dataset (which can be found
 <a class="reference external" href="https://zenodo.org/record/259444#.YYwmp73MLUJ">here</a>) in the
 <code class="docutils literal notranslate"><span class="pre">_Data</span></code> folder (creating a <code class="docutils literal notranslate"><span class="pre">HASYv2</span></code> folder with all of its contents).</p>
 </div>
+</div>
+<div class="section" id="current-state-of-development">
+<h2>Current State of Development<a class="headerlink" href="#current-state-of-development" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>With the return of my classes, development will be slowed down
+significantly in the next few months.</p>
+</div>
+<p>Base classes and a few models have already been defined, but development is
+hindered by the time it takes to train models. Currently, using Google Colab’s
+GPU acceleration, training on one fold takes several hours to complete (which
+basically uses up the daily available GPU runtime). Training a model with all
+10 folds would thus take up to 10 days for each model. Development should thus
+shift to implementations with
+<a class="reference external" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> and
+<a class="reference external" href="https://github.com/pytorch/xla/">PyTorch/XLA</a> (see <a class="reference internal" href="index.html#objectives"><span class="std std-ref">Objectives</span></a>),
+that could allow for multicore TPU training in Colab, speeding up the process.</p>
+<p>In terms of the Pygame implementation (see “pygame-tests” branch), much has yet
+to be done and improved, but the base window is about what I had in mind. I have
+understood a little bit better how Pygame works, which will help in the next
+steps. The text box is still very limited, and I’ll be working on it in the
+future.</p>
 </div>
 <div class="section" id="objectives">
 <h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h2>
@@ -269,6 +294,11 @@ written a docstring for everything so it’s particularly empty as of know.
 To access the documentation, you can use the shortcut file
 <code class="docutils literal notranslate"><span class="pre">_documentation.html</span></code> (you’ll need to have the _Sphinx directory in the
 same folder).</p>
+</div></blockquote>
+</li>
+<li><p>[WIP] Implement an interface for real-time drawing and prediction.</p>
+<blockquote>
+<div><p>Development has started using the Pygame module.</p>
 </div></blockquote>
 </li>
 <li><p>Try to use <a class="reference external" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> and
@@ -332,6 +362,7 @@ HASYv2 dataset.</p>
 <li><a class="reference internal" href="#">ImageNet Project</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#dataset">Dataset</a></li>
+<li><a class="reference internal" href="#current-state-of-development">Current State of Development</a></li>
 <li><a class="reference internal" href="#objectives">Objectives</a></li>
 </ul>
 </li>

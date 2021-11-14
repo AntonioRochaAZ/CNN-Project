@@ -283,7 +283,7 @@ class NetBase(nn.Module):
             self.is_classifier = False
         self.trainclass = TrainingClass(**kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return report(self)
 
     def report(self) -> str:
@@ -382,7 +382,7 @@ class NetBase(nn.Module):
         return self.parameters()
 
     @property
-    def manager(self) -> 'ReportManager':
+    def manager(self) -> "ReportManager":
         # See the class's docstring for information.
         return self.trainclass.manager
 
@@ -406,18 +406,18 @@ class DatasetBase(Dataset):
         self.inputs = []
         self.output = []
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.inputs)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> Tuple[Tensor, Tensor]:
         inputs = self.inputs[item]
         output = self.output[item]
         return inputs, output
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.report()
 
-    def report(self):
+    def report(self) -> str:
         """See :func:`report`."""
         string = ''
 
@@ -492,7 +492,7 @@ class TrainingClass:
         self.delete_state_dicts = delete_state_dicts
         self.manager = ReportManager(**kwargs)
 
-    def __getitem__(self, item) -> 'TrainingClass.TrainData':
+    def __getitem__(self, item) -> "TrainingClass.TrainData":
         return self.train_list[item]
 
     def __len__(self) -> int:
@@ -690,7 +690,7 @@ class TrainingClass:
 
         def add_epoch(self, error_tuple: Tuple[Tensor, Tensor],
                       accur_tuple: Tuple[Tensor, Tensor],
-                      state_dict: OrderedDict, comment: str = None) -> None:
+                      state_dict: OrderedDict, comment: str = None):
             """Method for adding an epoch's information to the class.
 
             Args:
@@ -712,7 +712,7 @@ class TrainingClass:
             if comment is not None:
                 self.comment += str(comment)    # str() just to avoid problems.
 
-        def finish_training(self) -> None:
+        def finish_training(self):
             """Method for adapting the class's attributes after training.
 
             This turns training and validation errors and accuracies into a
@@ -747,7 +747,7 @@ class TrainingClass:
 
             return string
 
-        def add_comment(self, comment: str) -> None:
+        def add_comment(self, comment: str):
             """Adds a comment to the class's comment attribute.
 
             Args:
@@ -849,7 +849,7 @@ class ReportManager:
         self.path = f".//{report_dir}/{dirname}"
         self.files = set()
 
-    def __call__(self, filename: str, method: str):
+    def __call__(self, filename: str, method: str) -> "ReportManager.File":
         """Returns a :class:`ReportManager.File` object that creates a txt file.
 
         This is done so the ``with`` statement can be called with a
@@ -885,7 +885,7 @@ class ReportManager:
         self.files.add(filename)
         return self.File(filename, method, self.report_dir, self.dirname)
 
-    def chdir(self, path: str) -> None:
+    def chdir(self, path: str):
         """Changes the report directory according to the informed final path.
 
         This method may create the necessary directories to reach the path
@@ -1033,7 +1033,7 @@ class ReportManager:
                     elif value2 == 'n':
                         raise FileNotFoundError("Report Folder does not exist.")
 
-        def __enter__(self):
+        def __enter__(self) -> "open file":
             self.file = open(
                 f".//{self.base_dir}/{self.dirname}/{self.filename}",
                 self.method)

@@ -203,6 +203,11 @@
 <span class="n">grayscale</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Grayscale</span><span class="p">()</span>
 
 <div class="viewcode-block" id="HASYv2Dataset"><a class="viewcode-back" href="../datasets.html#datasets.HASYv2Dataset">[docs]</a><span class="k">class</span> <span class="nc">HASYv2Dataset</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="sd">"""Dataset class for preparing HASYv2Dataset data for network training.</span>
+
+<span class="sd">    Note that initalizing the class won't load the data into it just yet. One</span>
+<span class="sd">    of the specialized methods need to be called for that.</span>
+<span class="sd">    """</span>
 
     <span class="n">default_paths</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">"base"</span><span class="p">:</span> <span class="s1">'.//_Data/HASYv2'</span><span class="p">,</span>
@@ -244,7 +249,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">cross_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="s1">'HASYv2Dataset'</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HASYv2Dataset.cross_val"><a class="viewcode-back" href="../datasets.html#datasets.HASYv2Dataset.cross_val">[docs]</a>    <span class="k">def</span> <span class="nf">cross_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="s2">"HASYv2Dataset"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Method for loading data from one fold to the dataset class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fold: The number of the fold (1 to 10).</span>
+<span class="sd">            train: Whether or not we want to load the training or the validation</span>
+<span class="sd">                (test) data from the corresponding fold.</span>
+<span class="sd">            dataset: Another :class:`HASYv2Dataset` object containing the</span>
+<span class="sd">                entirety of the data (generated through the</span>
+<span class="sd">                :func:`~HASYv2Dataset.for_colab` method). This is needed when</span>
+<span class="sd">                the dataset's individual images are not locally available (like</span>
+<span class="sd">                in GoogleDrive). This method will then use this base dataset</span>
+<span class="sd">                instead of trying to find the files locally.</span>
+
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="n">fold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -276,11 +295,20 @@
                 <span class="n">tsr</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tsr</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
 
-        <span class="k">return</span> <span class="bp">self</span>
+<div class="viewcode-block" id="HASYv2Dataset.for_colab"><a class="viewcode-back" href="../datasets.html#datasets.HASYv2Dataset.for_colab">[docs]</a>    <span class="k">def</span> <span class="nf">for_colab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Loads the entirety of the dataset into one single class instance.</span>
 
-    <span class="k">def</span> <span class="nf">for_colab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'HASYv2Dataset'</span><span class="p">:</span>
+<span class="sd">        This is useful for passing the complete dataset around without having to</span>
+<span class="sd">        move all of the 160,000+ image files. This is of course particularly</span>
+<span class="sd">        useful for training models in Google Colab, since uploading the raw</span>
+<span class="sd">        dataset to Google Drive has failed several times.</span>
+
+<span class="sd">        This function will automatically save the full :class:`HASYv2Dataset`</span>
+<span class="sd">        class in the Dataset's base directory (``self.path["base"]``) as</span>
+<span class="sd">        "colab_dataset.pkl", a pickle.</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
@@ -300,10 +328,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tsr</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'colab_dataset.pkl'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="s1">'base'</span><span class="p">]</span><span class="si">}</span><span class="s2">/colab_dataset.pkl"</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
 
-        <span class="k">return</span> <span class="bp">self</span></div>
 
 
 
