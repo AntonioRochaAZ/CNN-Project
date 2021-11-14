@@ -14,6 +14,7 @@ exploring a variety of CNN architectures to find in practice which ones work
 best for different applications. This project will also serve as a portfolio.
 
 .. note::
+    
     This is a *work in progress*.
 
 Dataset
@@ -33,7 +34,7 @@ This application idea draws inspiration from Google's
 `Quick, Draw! <https://quickdraw.withgoogle.com/>`_.
 
 Update 14/11/2021: I've found out through a friend that a website already exists
-for this: `http://detexify.kirelabs.org/symbols.html`_. Still, my development
+for this: http://detexify.kirelabs.org/symbols.html. Still, my development
 continues.
 
 .. note::
@@ -52,6 +53,7 @@ Current State of Development
 ----------------------------
 
 .. note::
+    
     With the return of my classes, development will be slowed down
     significantly in the next few months.
 
@@ -62,7 +64,7 @@ basically uses up the daily available GPU runtime). Training a model with all
 10 folds would thus take up to 10 days for each model. Development should thus
 shift to implementations with
 `PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
-`PyTorch/XLA <https://github.com/pytorch/xla/>`_ (see :ref:`Objectives`),
+`PyTorch/XLA <https://github.com/pytorch/xla/>`_ (see "Objectives" below),
 that could allow for multicore TPU training in Colab, speeding up the process.
 
 In terms of the Pygame implementation (see "pygame-tests" branch), much has yet
