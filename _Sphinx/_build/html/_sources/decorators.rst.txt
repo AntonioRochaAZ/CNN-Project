@@ -1,5 +1,0 @@
-Decorators
-==========
-
-.. automodule:: decorators
-   :members:
