@@ -33,7 +33,7 @@ This application idea draws inspiration from Google's
 `Quick, Draw! <https://quickdraw.withgoogle.com/>`_.
 
 Update 14/11/2021: I've found out through a friend that a website already exists
-for this: `http://detexify.kirelabs.org/symbols.html`_. Still, my development
+for this: `<http://detexify.kirelabs.org/symbols.html>`_. Still, my development
 continues.
 
 .. note::
@@ -71,43 +71,49 @@ understood a little bit better how Pygame works, which will help in the next
 steps. The text box is still very limited, and I'll be working on it in the
 future.
 
+.. figure:: ../_Assets/drawingboard.png
+    :width: 640
+    :align: center
+    :alt: *The current state of the Pygame UI implementation.*
+
+    *The current state of the Pygame UI implementation.*
+
 Objectives
 ----------
 
 Here's list of a few objectives I had in mind when starting this project. It
 contains some things I have completed and others that I still want to complete.
 
-- [DONE] Understand decorators.
+- [X] Understand decorators.
 
     Although I understand how they work and how to implement them, I haven't yet
     found much use. Yet.
 
-- [DONE] Understand context managers.
+- [X] Understand context managers.
 
     Not only have I understood *how* they work, I've developed the
     ``main.ReportManager`` class specifically to deal with creating model
     reports, something I already used to do in a more manual way before.
 
-- [WIP] Switch to
+- [X] Switch to
   `Google's Style <https://google.github.io/styleguide/pyguide.html>`_
 
     Working on it!
 
-- [WIP] Write a complete documentation with Sphinx.
+- [X] (WIP) Write a complete documentation with Sphinx.
 
     I have already worked with Sphinx in the past and personally loved it.
     This is a permanent work in progress, of course, but I'm currently testing a
     new theme (`Furo <https://github.com/pradyunsg/furo>`_) and haven't yet
     written a docstring for everything so it's particularly empty as of know.
-    To access the documentation, you can use the shortcut file
-    ``_documentation.html`` (you'll need to have the _Sphinx directory in the
-    same folder).
+    To access the documentation, start from the
+    ``/_Sphinx/_build.html/index.html`` file.
 
-- [WIP] Implement an interface for real-time drawing and prediction.
+- [ ] (WIP) Implement an interface for real-time drawing and prediction.
 
     Development has started using the Pygame module.
 
-- Try to use `PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
+- [ ] Try to use `PyTorch Lightning <https://www.pytorchlightning.ai/>`_ and
   `PyTorch/XLA <https://github.com/pytorch/xla/>`_ for accelerating training
   using cloud multi-core TPUs (in GoogleColab).
 
@@ -115,10 +121,10 @@ contains some things I have completed and others that I still want to complete.
     TPUs and specifically multi-core parallelism is something I don't (yet) know
     how to work with.
 
-- Perhaps learn and use `Optuna <https://optuna.org/>`_ for selecting training
+- [ ] Perhaps learn and use `Optuna <https://optuna.org/>`_ for selecting training
   and Neural Networks hyperparameters.
-- Develop more CNNs for testing.
-- Finish developing functions for evaluating trained model's performances on the
+- [ ] Develop more CNNs for testing.
+- [ ] Finish developing functions for evaluating trained model's performances on the
   HASYv2 dataset.
 
     Using the same parameters as the ones used in the

@@ -223,7 +223,7 @@ guess it at the same time. The user can then add it live to the LaTeX equation.
 This application idea draws inspiration from Google’s
 <a class="reference external" href="https://quickdraw.withgoogle.com/">Quick, Draw!</a>.</p>
 <p>Update 14/11/2021: I’ve found out through a friend that a website already exists
-for this: <a href="#id3"><span class="problematic" id="id4">`http://detexify.kirelabs.org/symbols.html`_</span></a>. Still, my development
+for this: <a class="reference external" href="http://detexify.kirelabs.org/symbols.html">http://detexify.kirelabs.org/symbols.html</a>. Still, my development
 continues.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -260,48 +260,51 @@ to be done and improved, but the base window is about what I had in mind. I have
 understood a little bit better how Pygame works, which will help in the next
 steps. The text box is still very limited, and I’ll be working on it in the
 future.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="_images/drawingboard.png"><img alt="*The current state of the Pygame UI implementation.*" src="_images/drawingboard.png" style="width: 640px;"/></a>
+<p class="caption"><span class="caption-text"><em>The current state of the Pygame UI implementation.</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
 </div>
 <div class="section" id="objectives">
 <h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h2>
 <p>Here’s list of a few objectives I had in mind when starting this project. It
 contains some things I have completed and others that I still want to complete.</p>
 <ul>
-<li><p>[DONE] Understand decorators.</p>
+<li><p>[X] Understand decorators.</p>
 <blockquote>
 <div><p>Although I understand how they work and how to implement them, I haven’t yet
 found much use. Yet.</p>
 </div></blockquote>
 </li>
-<li><p>[DONE] Understand context managers.</p>
+<li><p>[X] Understand context managers.</p>
 <blockquote>
 <div><p>Not only have I understood <em>how</em> they work, I’ve developed the
 <code class="docutils literal notranslate"><span class="pre">main.ReportManager</span></code> class specifically to deal with creating model
 reports, something I already used to do in a more manual way before.</p>
 </div></blockquote>
 </li>
-<li><p>[WIP] Switch to
+<li><p>[X] Switch to
 <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">Google’s Style</a></p>
 <blockquote>
 <div><p>Working on it!</p>
 </div></blockquote>
 </li>
-<li><p>[WIP] Write a complete documentation with Sphinx.</p>
+<li><p>[X] (WIP) Write a complete documentation with Sphinx.</p>
 <blockquote>
 <div><p>I have already worked with Sphinx in the past and personally loved it.
 This is a permanent work in progress, of course, but I’m currently testing a
 new theme (<a class="reference external" href="https://github.com/pradyunsg/furo">Furo</a>) and haven’t yet
 written a docstring for everything so it’s particularly empty as of know.
-To access the documentation, you can use the shortcut file
-<code class="docutils literal notranslate"><span class="pre">_documentation.html</span></code> (you’ll need to have the _Sphinx directory in the
-same folder).</p>
+To access the documentation, start from the
+<code class="docutils literal notranslate"><span class="pre">/_Sphinx/_build.html/index.html</span></code> file.</p>
 </div></blockquote>
 </li>
-<li><p>[WIP] Implement an interface for real-time drawing and prediction.</p>
+<li><p>[ ] (WIP) Implement an interface for real-time drawing and prediction.</p>
 <blockquote>
 <div><p>Development has started using the Pygame module.</p>
 </div></blockquote>
 </li>
-<li><p>Try to use <a class="reference external" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> and
+<li><p>[ ] Try to use <a class="reference external" href="https://www.pytorchlightning.ai/">PyTorch Lightning</a> and
 <a class="reference external" href="https://github.com/pytorch/xla/">PyTorch/XLA</a> for accelerating training
 using cloud multi-core TPUs (in GoogleColab).</p>
 <blockquote>
@@ -310,10 +313,10 @@ TPUs and specifically multi-core parallelism is something I don’t (yet) know
 how to work with.</p>
 </div></blockquote>
 </li>
-<li><p>Perhaps learn and use <a class="reference external" href="https://optuna.org/">Optuna</a> for selecting training
+<li><p>[ ] Perhaps learn and use <a class="reference external" href="https://optuna.org/">Optuna</a> for selecting training
 and Neural Networks hyperparameters.</p></li>
-<li><p>Develop more CNNs for testing.</p></li>
-<li><p>Finish developing functions for evaluating trained model’s performances on the
+<li><p>[ ] Develop more CNNs for testing.</p></li>
+<li><p>[ ] Finish developing functions for evaluating trained model’s performances on the
 HASYv2 dataset.</p>
 <blockquote>
 <div><p>Using the same parameters as the ones used in the
