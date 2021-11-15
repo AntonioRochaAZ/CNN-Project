@@ -14,7 +14,7 @@ exploring a variety of CNN architectures to find in practice which ones work
 best for different applications. This project will also serve as a portfolio.
 
 The code's documentation is done with [Sphinx](https://www.sphinx-doc.org/)
-and can be found [here](antoniorochaaz.github.io/ImageNet).
+and can be found [here](https://antoniorochaaz.github.io/ImageNet/).
 
 > Note:
     This is a *work in progress*.
@@ -104,7 +104,7 @@ contains some things I have completed and others that I still want to complete.
     This is a permanent work in progress, of course, but I'm currently testing a
     new theme ([Furo](https://github.com/pradyunsg/furo)) and haven't yet
     written a docstring for everything so it's particularly empty as of know.
-    You can find the documentation [here](antoniorochaaz.github.io/ImageNet).
+    You can find the documentation [here](https://antoniorochaaz.github.io/ImageNet/).
 
 - [ ] (WIP) Implement an interface for real-time drawing and prediction.
 
