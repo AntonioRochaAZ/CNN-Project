@@ -1,6 +1,4 @@
-#ImageNet Project
-
----
+# ImageNet Project
 
 ## Introduction
 
