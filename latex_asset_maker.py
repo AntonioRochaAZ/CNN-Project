@@ -6,6 +6,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import Divider, Size
 from PIL import Image
 from datasets import HASYv2Dataset
+from warnings import warn
+
+###############################################################
+warn("This code does not work for all assets, some have to be"
+     "treated differently. All assets are available in the"
+     "_Assets folder", RuntimeWarning)
+###############################################################
 
 
 fig = plt.figure(figsize=(6, 6))
