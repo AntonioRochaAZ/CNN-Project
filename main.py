@@ -67,9 +67,12 @@ def train_model(
 
     optimizer = th.optim.Adam(params, lr=learning_rate)
 
-    device = th.device('cuda:0' if th.cuda.is_available() else 'cpu')
-    model = model.to(device)
     train_loader, valid_loader = loader_tuple
+    # device = th.device('cuda:0' if th.cuda.is_available() else 'cpu')
+    device = train_loader.dataset.device
+    if device != valid_loader.dataset.device:
+        valid_loader.dataset.to(device)
+    model = model.to(device)
 
     train_error = th.zeros(nb_epochs, 1)
     valid_error = th.zeros(nb_epochs, 1)
@@ -105,8 +108,8 @@ def train_model(
             model.train()
             for data, label in train_loader:
                 # forward:
-                data = data.to(device)
-                label = label.to(device)
+                # data = data.to(device)        # data and label devices are
+                # label = label.to(device)      # now changed beforehand.
                 out = model.forward(data)
 
                 # step
@@ -118,7 +121,6 @@ def train_model(
                 optimizer.step()
 
                 # adding to the error
-                # train_error[epoch] += abs(loss)
                 train_error[epoch] += float(loss)
 
                 if model.is_classifier:
@@ -139,15 +141,14 @@ def train_model(
                 model.eval()
                 for data, label in valid_loader:
                     # forward:
-                    data = data.to(device)
-                    label = label.to(device)
+                    # data = data.to(device)    # data and label devices are
+                    # label = label.to(device)  # now changed beforehand.
                     out = model.forward(data)
                     if model.is_classifier:
                         label = label.view(-1)
                     loss = loss_fn(out, label)
 
                     # adding to the error
-                    # valid_error[epoch] += abs(loss)
                     valid_error[epoch] += float(loss)
 
                     if model.is_classifier:
@@ -405,6 +406,7 @@ class DatasetBase(Dataset):
         self.kwargs = kwargs
         self.inputs = []
         self.output = []
+        self.device = th.device("cpu")
 
     def __len__(self) -> int:
         return len(self.inputs)
@@ -416,6 +418,27 @@ class DatasetBase(Dataset):
 
     def __str__(self) -> str:
         return self.report()
+
+    def to(self, device: th.device):
+        """Method for changing the input and output tensors' device.
+
+        Args:
+            device: A th.device.
+        """
+
+        if isinstance(self.inputs, list):
+            for index in range(len(self.inputs)):
+                self.inputs[index] = self.inputs[index].to(device)
+        else:
+            self.inputs = self.inputs.to(device)
+
+        if isinstance(self.output, list):
+            for index in range(len(self.output)):
+                self.output[index] = self.output[index].to(device)
+        else:
+            self.output = self.output.to(device)
+
+        self.device = device
 
     def report(self) -> str:
         """See :func:`report`."""
@@ -758,7 +781,6 @@ class TrainingClass:
                 self.comment = comment
             else:
                 self.comment += comment
-
 
 class ReportManager:
     """Class for managing a model's report folder and report files.
