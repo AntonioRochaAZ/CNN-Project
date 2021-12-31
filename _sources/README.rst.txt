@@ -1,5 +1,5 @@
-ImageNet Project
-================
+CNN Project
+===========
 
 Introduction
 ------------
