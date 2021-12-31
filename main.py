@@ -72,6 +72,12 @@ def train_model(
     device = train_loader.dataset.device
     if device != valid_loader.dataset.device:
         valid_loader.dataset.to(device)
+
+    cuda_nb = torch.cuda.device_count()
+    if cuda_nb > 1:
+        print(f"Number of GPUs: {cuda_nb}.")
+        model = nn.DataParallel(model)
+
     model = model.to(device)
 
     train_error = th.zeros(nb_epochs, 1)
