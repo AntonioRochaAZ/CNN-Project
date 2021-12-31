@@ -73,7 +73,7 @@ def train_model(
     if device != valid_loader.dataset.device:
         valid_loader.dataset.to(device)
 
-    cuda_nb = torch.cuda.device_count()
+    cuda_nb = th.cuda.device_count()
     if cuda_nb > 1:
         print(f"Number of GPUs: {cuda_nb}.")
         model = nn.DataParallel(model)
