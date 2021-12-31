@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ImageNet'
+project = 'CNNProject'
 copyright = '2021, Antonio Rocha'
 author = 'Antonio Rocha'
 
@@ -58,7 +58,7 @@ pygments_style = 'rainbow_dash'
 # a list of builtin themes.
 #
 
-html_title="ImageNet Project"
+html_title="CNN Project"
 
 
 # html_logo = '_assets/logo.gif'
@@ -76,7 +76,7 @@ html_theme_options = {
         "color-brand-content": "#00FF6A",
         # "color-admonition-background": "00FF00",
     },
-    "announcement": "Welcome to ImageNet's documentation!"
+    "announcement": "Welcome to CNN Project's documentation!"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
