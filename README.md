@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![Current State of the pygame implementation.](_Assets/drawingboard.png
+![Current State of the pygame implementation.](_Assets/drawingboard.bmp
 "Drawing Board")
 
 Despite having previous experiences in developing CNNs in PyTorch, I've always
@@ -79,7 +79,7 @@ understood a little bit better how Pygame works, which will help in the next
 steps. The text box is still very limited, and I'll be working on it in the
 future.
 
-![Current State of the pygame implementation.](_Assets/drawingboard.png
+![Current State of the pygame implementation.](_Assets/drawingboard.bmp
 "Drawing Board")
 *<div align="center">The current state of the Pygame UI implementation.</div>*
 
