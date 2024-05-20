@@ -2,6 +2,9 @@
 
 ## Introduction
 
+![Current State of the pygame implementation.](_Assets/drawingboard.png
+"Drawing Board")
+
 Despite having previous experiences in developing CNNs in PyTorch, I've always
 felt overwhelmed by the number of different of ways that one can combine
 convolutional, max-pooling and linear layers - with different kernel sizes and
@@ -15,7 +18,11 @@ The code's documentation is done with [Sphinx](https://www.sphinx-doc.org/)
 and can be found [here](https://antoniorochaaz.github.io/CNN-Project/).
 
 > Note:
-    This is a *work in progress*.
+    Work is discontinued. More computational power would be required to improve
+    models.
+
+The pygame interface works and can be run through the command line with ```python -m main.py```.
+The conda environment used can be found in the environment.yml.
 
 Dataset
 -------
@@ -104,7 +111,7 @@ contains some things I have completed and others that I still want to complete.
     written a docstring for everything so it's particularly empty as of know.
     You can find the documentation [here](https://antoniorochaaz.github.io/CNN-Project/).
 
-- [ ] (WIP) Implement an interface for real-time drawing and prediction.
+- [(WIP)] Implement an interface for real-time drawing and prediction.
 
     >Development has started, using the Pygame module.
 

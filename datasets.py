@@ -1,4 +1,4 @@
-from main import *
+from training import *
 import pandas as pd
 from torchvision import transforms
 from PIL import Image
