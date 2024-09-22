@@ -1,9 +1,9 @@
 import torch as th
 import torch.nn as nn
 import decorators
-from typing import Tuple, Union, OrderedDict
+from typing import Union, OrderedDict
 from types import GeneratorType
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
@@ -19,7 +19,7 @@ Tensor = th.Tensor
 @decorators.timer
 def train_model(
         model: 'NetBase', nb_epochs: int, learning_rate: float,
-        loss_fn: 'nn.Loss', loader_tuple: Tuple[DataLoader, DataLoader],
+        loss_fn: 'nn.Loss', loader_tuple: tuple[DataLoader, DataLoader],
         params: Union[GeneratorType, str] = None, print_bool: bool = True,
         remove_bool: bool = True, comment: str = None):
 
@@ -85,28 +85,16 @@ def train_model(
     train_accur = th.zeros(nb_epochs, 1)
     valid_accur = th.zeros(nb_epochs, 1)
 
-    manager = model.trainclass.manager
-    if len(model.trainclass) == 0:
-        with manager('DataReport.txt', 'w') as f:
-            f.write(
-                f'Net Report:\n'
-                f'{report(model)}\n'
-            )
-
-    with manager('DataReport.txt', 'a') as f:
+    # Reporting:
+    with model.manager('ModelReport.txt', 'w') as f:
         f.write(
-            f'Training {len(model.trainclass)}: ----------------------\n'
-            f'Training Dataset:\n'
-            f'{report(loader_tuple[0].dataset)}\n'
-            f'Validation Dataset:\n'
-            f'{report(loader_tuple[1].dataset)}\n'
+            f'Net Report:\n'
+            f'{report(model)}\n'
         )
-
     model.trainclass.add_training(
-        nb_epochs, learning_rate, loss_fn, str(datetime.today())
+        nb_epochs, learning_rate, loss_fn, str(datetime.today()), loader_tuple,
+        comment
     )
-    if comment is not None:
-        model.trainclass.train_list[-1].add_comment(comment)
 
     try:
         # TRAINING LOOP
@@ -174,7 +162,7 @@ def train_model(
 
             # Also saving the state_dict at the epoch folder:
             th.save(model.state_dict(),
-                    f'.//{manager.path}/Epochs/'
+                    f'.//{model.manager.path}/Epochs/'
                     f'Epoch_{epoch + 1}.stdict')
 
             model.trainclass.train_list[-1].add_epoch(
@@ -184,11 +172,11 @@ def train_model(
 
     except KeyboardInterrupt:
 
+        # noinspection PyUnboundLocalVariable
         if train_error[epoch] or valid_error[epoch] == 0:
             epoch2 = epoch - 1
         else:
             epoch2 = epoch
-
 
         model.trainclass.train_list[-1].add_epoch(
             (train_error[epoch2], valid_error[epoch2]),
@@ -199,21 +187,11 @@ def train_model(
         )
 
     # Finding and loading the best epoch:
-    model.trainclass.finish_training()
+    model.trainclass.finish_training(remove_bool, model.is_classifier)
     model.load_state_dict(model.trainclass.train_list[-1].best_state)
 
-    if remove_bool:
-        manager.remove_epochs()
-
-    with manager('TrainingReport.txt', 'w') as f:
-        f.write(report(model.trainclass))
-
-    model.trainclass.plot(save_bool=True, block=False, var='error')
-    if model.is_classifier:
-        model.trainclass.plot(save_bool=True, block=False, var='accur')
-
     model = model.to(th.device('cpu'))
-    with open(f'{manager.path}/best_model.pkl', 'wb') as f:
+    with open(f'{model.manager.path}/best_model.pkl', 'wb') as f:
         pickle.dump(model, f)
 
 def report(cls_instance) -> str:
@@ -393,78 +371,12 @@ class NetBase(nn.Module):
         # See the class's docstring for information.
         return self.trainclass.manager
 
-class DatasetBase(Dataset):
-    """Base class for storing datasets that can be readily used for training.
-
-    Attributes:
-        inputs: A list that contains the networks' inputs, ready to be called by
-            the model. All pre-treatment must done before-hand or during class
-            initialization.
-        output: A list that contains the expected outputs for training or
-            validation. They should also be ready to be read by the loss
-            function to be used.
-
-    """
-    
-    def __init__(self, *args, **kwargs):
-        super(DatasetBase, self).__init__()
-        self.args = args
-        self.kwargs = kwargs
-        self.inputs = []
-        self.output = []
-        self.device = th.device("cpu")
-
-    def __len__(self) -> int:
-        return len(self.inputs)
-
-    def __getitem__(self, item) -> Tuple[Tensor, Tensor]:
-        inputs = self.inputs[item]
-        output = self.output[item]
-        return inputs, output
-
-    def __str__(self) -> str:
-        return self.report()
-
-    def to(self, device: th.device):
-        """Method for changing the input and output tensors' device.
-
-        Args:
-            device: A th.device.
-        """
-
-        if isinstance(self.inputs, list):
-            for index in range(len(self.inputs)):
-                self.inputs[index] = self.inputs[index].to(device)
-        else:
-            self.inputs = self.inputs.to(device)
-
-        if isinstance(self.output, list):
-            for index in range(len(self.output)):
-                self.output[index] = self.output[index].to(device)
-        else:
-            self.output = self.output.to(device)
-
-        self.device = device
-
-    def report(self) -> str:
-        """See :func:`report`."""
-        string = ''
-
-        if not self.args == ():
-            string += f"Arguments:\n"
-            for arg in self.args:
-                string += f"\t{arg}\n"
-
-        if not self.kwargs == {}:
-            string += f"Keyword Arguments:\n"
-            for key in self.kwargs:
-                string += f"\t{key}: {self.kwargs[key]}\n"
-
-        string += f"Number of data points: {len(self)}\n"
-        return string
-
 class TrainingClass:
     """Class for storing training information.
+
+    This class was created with the intent of storing multiple training
+    information in case the model is fine-tuned (and thus trained multiple
+    times, possibly with different data and training conditions).
 
     Attributes:
         train_list: List of :class:`TrainingClass.TrainData` objects with the
@@ -531,7 +443,8 @@ class TrainingClass:
         return self.report()
 
     def add_training(self, nb_epochs: int, learning_rate: float,
-                     loss_fn: 'nn.Loss', file_name: str):
+                     loss_fn: 'nn.Loss', file_name: str,
+                     loader_tuple: tuple[DataLoader], comment: str = None):
         """Adds a :class:`TrainingClass.TrainData` object to
             the train_list attribute.
 
@@ -542,6 +455,7 @@ class TrainingClass:
             file_name: The file_name picked for the training.
             .. warning::
                 ``file_name`` might become deprecated in the future.
+            loader_tuple: (training, validation) DataLoader objects.
 
         """
         if file_name is not None:
@@ -550,7 +464,24 @@ class TrainingClass:
         self.train_list.append(
             self.TrainData(nb_epochs, learning_rate, loss_fn, file_name))
 
-    def finish_training(self):
+        if len(self) == 1:
+            method = "w"
+        else:
+            method = "a"
+
+        with self.manager('DataReport.txt', method) as f:
+            f.write(
+                f'Training {len(self)}: ----------------------\n'
+                f'Training Dataset:\n'
+                f'{report(loader_tuple[0].dataset)}\n'
+                f'Validation Dataset:\n'
+                f'{report(loader_tuple[1].dataset)}\n'
+            )
+
+        # Adding the comment:
+        self.train_list[-1].add_comment(comment)
+
+    def finish_training(self, remove_bool: bool = False, plot_accuracy: bool = False):
         """Method for adapting the class's attributes after training.
 
         This adds the last training's data to the rest of the training
@@ -579,6 +510,16 @@ class TrainingClass:
             except IndexError:
                 pass
 
+        if remove_bool:
+            self.manager.remove_epochs()
+
+        with self.manager('TrainingReport.txt', 'w') as f:
+            f.write(report(self))
+
+        self.plot(save_bool=True, block=False, var='error')
+        if plot_accuracy:
+            self.plot(save_bool=True, block=False, var='accur')
+
     def plot(self, save_bool: bool = False, block: bool = False,
              var: str = 'error'):
         """Plots training or accuracy graphs for all trainings.
@@ -592,21 +533,26 @@ class TrainingClass:
 
         """
 
+        if len(self) == 1:
+            plot_fn = plt.scatter   # Otherwise the point will not be visible.
+        else:
+            plot_fn = plt.plot
+
         sns.set()
         plt.figure()
         if var == 'error':
-            plt.plot(range(1, len(self.train_error) + 1), self.train_error,
+            plot_fn(range(1, len(self.train_error) + 1), self.train_error,
                      label='Training Loss')
-            plt.plot(range(1, len(self.valid_error) + 1), self.valid_error,
+            plot_fn(range(1, len(self.valid_error) + 1), self.valid_error,
                      label='Validation Loss')
             plt.ylabel('Loss value')
             plt.title('Loss')
             title = 'loss'
 
         elif var == 'accur':
-            plt.plot(range(1, len(self.train_accur) + 1),
+            plot_fn(range(1, len(self.train_accur) + 1),
                      100 * self.train_accur, label='Training Accuracy')
-            plt.plot(range(1, len(self.valid_accur) + 1),
+            plot_fn(range(1, len(self.valid_accur) + 1),
                      100 * self.valid_accur, label='Validation Accuracy')
             plt.ylabel('Accuracy (%)')
             plt.title('Accuracy')
@@ -617,8 +563,11 @@ class TrainingClass:
         plt.xlabel('Epoch number')
         plt.legend()
         if save_bool:
-            plt.savefig(f'{self.manager.path}/Images/'
-                        f'{self.train_list[-1].file_name}_{title}.png')
+            plt.savefig(
+                f'{self.manager.path}/Images/'
+                f'{title}-training_nb_{len(self.train_list)}'
+                f'-{self.train_list[-1].file_name}.png'
+            )
         if block:
             plt.show(block=block)
             plt.pause(5)
@@ -692,7 +641,6 @@ class TrainingClass:
             Args:
                 nb_epochs: Number of epochs for training.
                 learning_rate: Learning Rate.
-                params: The network to train.
                 loss_fn: The Loss Function used.
                 file_name: The file_name picked for the training.
 
@@ -717,8 +665,8 @@ class TrainingClass:
         def __str__(self) -> str:
             return self.report()
 
-        def add_epoch(self, error_tuple: Tuple[Tensor, Tensor],
-                      accur_tuple: Tuple[Tensor, Tensor],
+        def add_epoch(self, error_tuple: tuple[Tensor, Tensor],
+                      accur_tuple: tuple[Tensor, Tensor],
                       state_dict: OrderedDict, comment: str = None):
             """Method for adding an epoch's information to the class.
 
@@ -746,7 +694,7 @@ class TrainingClass:
 
             This turns training and validation errors and accuracies into a
             tensor (originally lists). As well as defining the best epoch in
-            this training and separating it's state dict.
+            this training and separating its state dict.
 
             """
             self.train_error = th.cat(self.train_error)
@@ -791,7 +739,7 @@ class TrainingClass:
 class ReportManager:
     """Class for managing a model's report folder and report files.
 
-    This class is instantiated when a :class:`NetBase` class is initalized. It's
+    This class is instantiated when a :class:`NetBase` class is initialized. It's
     stored in the model's :class:`TrainingClass` class (``trainclass``
     attribute), although it can be called through the model's ``manager``
     attribute (property).
@@ -849,30 +797,24 @@ class ReportManager:
         else:
             self.base_path = os.getcwd()
 
-        try:
-            if not os.path.exists(f".//{report_dir}/{dirname}"):
-                os.mkdir(f".//{report_dir}/{dirname}")
-                os.mkdir(f".//{report_dir}/{dirname}/Epochs")
-                os.mkdir(f".//{report_dir}/{dirname}/Images")
-            else:
-                date = str(datetime.today())
-                date = date.replace(":", "_")
+        def _make_dirs(rep_dir, dir_name):
+            # Avoiding code repetition
+            # Makes sure rep_dir gets created in case it isn't already:
+            os.makedirs(f".//{rep_dir}/{dir_name}/Epochs")
+            os.mkdir(f".//{rep_dir}/{dir_name}/Images")
 
-                print(
-                    f'Report "{dirname}" already exists, creating a new name: '
-                    f'{dirname} - {date}')
-                dirname = f'{dirname} - {date}'
-                os.mkdir(f".//{report_dir}/{dirname}")
-                os.mkdir(f".//{report_dir}/{dirname}/Epochs")
-                os.mkdir(f".//{report_dir}/{dirname}/Images")
-        except FileNotFoundError:
-            # Related to the _Reports folder:
-            print(f'Creating "{report_dir}" folder in the current directory '
-                  f'({os.getcwd()})...')
-            os.mkdir(f"{report_dir}")
-            os.mkdir(f".//{report_dir}/{dirname}")
-            os.mkdir(f".//{report_dir}/{dirname}/Epochs")
-            os.mkdir(f".//{report_dir}/{dirname}/Images")
+        if not os.path.exists(f".//{report_dir}/{dirname}"):
+            _make_dirs(report_dir, dirname)
+        else:
+            date = str(datetime.today())
+            date = date.replace(":", "_")
+
+            print(
+                f'Report "{dirname}" already exists, creating a new name: '
+                f'{dirname} - {date}')
+            dirname = f'{dirname} - {date}'
+            _make_dirs(report_dir, dirname)
+
         self.dirname = dirname
         self.path = f".//{report_dir}/{dirname}"
         self.files = set()
@@ -908,7 +850,7 @@ class ReportManager:
             An instance of a :class:`ReportManager.File` object.
 
         """
-        if filename.find('.') == -1:
+        if "." not in filename:
             filename += '.txt'
         self.files.add(filename)
         return self.File(filename, method, self.report_dir, self.dirname)

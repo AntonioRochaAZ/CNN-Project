@@ -1,4 +1,4 @@
-from training import *
+from training import NetBase
 import torch.nn as nn
 
 class ConvNetBase(NetBase):

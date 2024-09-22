@@ -1,0 +1,20 @@
+Overall Training Report: FourLayerGPU - 2024-09-22 20_38_08.952345
+	Number of Trainings: 2
+	Total Number of Epochs: 2
+	Best Epoch: 1
+
+Training Information:
+	Training 0: ------------------------
+		Number of Epochs: 1
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2024-09-22 20:38:08.970133
+		Best Epoch: 0
+
+	Training 1: ------------------------
+		Number of Epochs: 1
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2024-09-22 20:58:09.312103
+		Best Epoch: 0
+
