@@ -86,11 +86,12 @@ def train_model(
     valid_accur = th.zeros(nb_epochs, 1)
 
     # Reporting:
-    with model.manager('ModelReport.txt', 'w') as f:
-        f.write(
-            f'Net Report:\n'
-            f'{report(model)}\n'
-        )
+    if len(model.trainclass) == 0:
+        with model.manager('ModelReport.txt', 'w') as f:
+            f.write(
+                f'Net Report:\n'
+                f'{report(model)}\n'
+            )
     model.trainclass.add_training(
         nb_epochs, learning_rate, loss_fn, str(datetime.today()), loader_tuple,
         comment
@@ -469,14 +470,15 @@ class TrainingClass:
         else:
             method = "a"
 
-        with self.manager('DataReport.txt', method) as f:
-            f.write(
-                f'Training {len(self)}: ----------------------\n'
-                f'Training Dataset:\n'
-                f'{report(loader_tuple[0].dataset)}\n'
-                f'Validation Dataset:\n'
-                f'{report(loader_tuple[1].dataset)}\n'
-            )
+        if loader_tuple is not None:
+            with self.manager('DataReport.txt', method) as f:
+                f.write(
+                    f'Training {len(self)}: ----------------------\n'
+                    f'Training Dataset:\n'
+                    f'{report(loader_tuple[0].dataset)}\n'
+                    f'Validation Dataset:\n'
+                    f'{report(loader_tuple[1].dataset)}\n'
+                )
 
         # Adding the comment:
         self.train_list[-1].add_comment(comment)

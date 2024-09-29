@@ -1,0 +1,21 @@
+{
+  "seed": 74,
+  "comment": "First lightning test!",
+  "model": {
+    "model_name": "FourLayer",
+    "model_args": [],
+    "model_kwargs": {
+      "dirname": "FourLayer_lightning_test"
+    }
+  },
+  "training": {
+    "loss_fn": "NLLLoss",
+    "params": "all",
+    "learning_rate": 1e-4,
+    "trainer_kwargs": {
+      "max_epochs": 1,
+      "accelerator": "cpu",
+      "deterministic": true
+    }
+  }
+}
