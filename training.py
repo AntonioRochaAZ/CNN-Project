@@ -189,8 +189,8 @@ def train_model(
 
     # Finding and loading the best epoch:
     model.trainclass.finish_training(remove_bool, model.is_classifier)
+    # Loading best state dict and saving it (in cpu device).
     model.load_state_dict(model.trainclass.train_list[-1].best_state)
-
     model = model.to(th.device('cpu'))
     with open(f'{model.manager.path}/best_model.pkl', 'wb') as f:
         pickle.dump(model, f)
@@ -265,6 +265,7 @@ class NetBase(nn.Module):
                     f'{type(is_classifier)}, expected bool.')
             else:
                 self.is_classifier = kwargs["is_classifier"]
+            del kwargs['is_classifier'] # So it isn't passed to TrainingClass.
         else:
             self.is_classifier = False
         self.trainclass = TrainingClass(**kwargs)
@@ -387,10 +388,17 @@ class TrainingClass:
         valid_error: Validation Error for each epoch (Tensor).
         train_accur: Training Accuracy for each epoch (Tensor).
         valid_accur: Validation Accuracy for each epoch (Tensor).
+        train_epoch_idx: The index of the epochs reported in the train_error
+            and train_accur tensors. This has been added because the pytorch
+            lightning implementation may lead to float values (at least in
+            the case of the valid_epoch_idx).
+        valid_epoch_idx: The index of the epochs reported in the valid_error
+            and valid_accur tensors. This has been added because the pytorch
+            lightning implementation may lead to float values.
         best_epoch: The number of the best epoch (int).
         best_state: The best state_dict out of all training epochs
             (collections.OrderedDict).
-        delete_state_dicts: Whether or not to keep state_dicts from previous
+        delete_state_dicts: Whether to keep state_dicts from previous
             **training loops**. Its value indicates how many trainings back we
             delete. For example: 0 means we don't delete any; 1 we delete the
             last (meaning we won't keep any); 2 means we delete the second last
@@ -420,7 +428,7 @@ class TrainingClass:
 
     """
 
-    def __init__(self, delete_state_dicts: int = 1, **kwargs):
+    def __init__(self, delete_state_dicts: int = 1, **report_manager_kwargs):
         """Class initialization"""
 
         self.train_list = []
@@ -429,10 +437,12 @@ class TrainingClass:
         self.valid_error = th.Tensor([])
         self.train_accur = th.Tensor([])
         self.valid_accur = th.Tensor([])
+        self.train_epoch_idx = th.Tensor([])
+        self.valid_epoch_idx = th.Tensor([])
         self.best_epoch = None
         self.best_state = None
         self.delete_state_dicts = delete_state_dicts
-        self.manager = ReportManager(**kwargs)
+        self.manager = ReportManager(**report_manager_kwargs)
 
     def __getitem__(self, item) -> "TrainingClass.TrainData":
         return self.train_list[item]
@@ -491,7 +501,6 @@ class TrainingClass:
 
         """
         self.train_list[-1].finish_training()
-        self.nb_epochs += len(self.train_list[-1])
 
         self.train_error = th.cat([self.train_error,
                                    self.train_list[-1].train_error]).detach()
@@ -501,6 +510,20 @@ class TrainingClass:
                                    self.train_list[-1].train_accur]).detach()
         self.valid_accur = th.cat([self.valid_accur,
                                    self.train_list[-1].valid_accur]).detach()
+        # Train idxs:
+        updated_idxs = self.train_list[-1].train_epoch_idx
+        for i in range(len(updated_idxs)):
+            updated_idxs[i] = updated_idxs[i] + self.nb_epochs
+        self.train_epoch_idx = th.cat([self.train_epoch_idx,
+                                       updated_idxs]).detach()
+        # Validation idxs:
+        updated_idxs = self.train_list[-1].valid_epoch_idx
+        for i in range(len(updated_idxs)):
+            updated_idxs[i] = updated_idxs[i] + self.nb_epochs
+        self.valid_epoch_idx = th.cat([self.valid_epoch_idx,
+                                       updated_idxs]).detach()
+        
+        self.nb_epochs += len(self.train_list[-1])
         self.best_epoch = self.train_list[-1].best_epoch + \
             self.nb_epochs - len(self.train_list[-1].train_error)
 
@@ -527,15 +550,15 @@ class TrainingClass:
         """Plots training or accuracy graphs for all trainings.
 
         Args:
-            save_bool: Whether or not to save the graph as a file.
-            block: Whether or not the plotting of the graph should stop
+            save_bool: Whether to save the graph as a file.
+            block: Whether the plotting of the graph should stop
                 the code from continuing.
             var: Which graph to plot ("error" for the error or "accur" for
                 the accuracy).
 
         """
 
-        if len(self) == 1:
+        if self.nb_epochs == 1:
             plot_fn = plt.scatter   # Otherwise the point will not be visible.
         else:
             plot_fn = plt.plot
@@ -543,19 +566,15 @@ class TrainingClass:
         sns.set()
         plt.figure()
         if var == 'error':
-            plot_fn(range(1, len(self.train_error) + 1), self.train_error,
-                     label='Training Loss')
-            plot_fn(range(1, len(self.valid_error) + 1), self.valid_error,
-                     label='Validation Loss')
+            plot_fn(self.train_epoch_idx, self.train_error, label='Training Loss')
+            plot_fn(self.valid_epoch_idx, self.valid_error, label='Validation Loss')
             plt.ylabel('Loss value')
             plt.title('Loss')
             title = 'loss'
 
         elif var == 'accur':
-            plot_fn(range(1, len(self.train_accur) + 1),
-                     100 * self.train_accur, label='Training Accuracy')
-            plot_fn(range(1, len(self.valid_accur) + 1),
-                     100 * self.valid_accur, label='Validation Accuracy')
+            plot_fn(self.train_epoch_idx, 100 * self.train_accur, label='Training Accuracy')
+            plot_fn(self.valid_epoch_idx, 100 * self.valid_accur, label='Validation Accuracy')
             plt.ylabel('Accuracy (%)')
             plt.title('Accuracy')
             title = 'accur'
@@ -620,6 +639,13 @@ class TrainingClass:
             valid_error: Validation Error for each epoch (Tensor).
             train_accur: Training Accuracy for each epoch (Tensor).
             valid_accur: Validation Accuracy for each epoch (Tensor).
+            train_epoch_idx: The index of the epochs reported in the train_error
+                and train_accur tensors. This has been added because the pytorch
+                lightning implementation may lead to float values (at least in
+                the case of the valid_epoch_idx).
+            valid_epoch_idx: The index of the epochs reported in the valid_error
+                and valid_accur tensors. This has been added because the pytorch
+                lightning implementation may lead to float values.
             state_dict_list: A list with the state_dict of each epoch. It may
                 be reset after training if the model's associated
                 :class:`TrainingClass` has a ``delete_state_dicts`` attribute
@@ -656,6 +682,8 @@ class TrainingClass:
             self.valid_error = []
             self.train_accur = []
             self.valid_accur = []
+            self.train_epoch_idx = []
+            self.valid_epoch_idx = []
             self.state_dict_list = []
             self.best_epoch = None
             self.best_state = None
@@ -667,10 +695,53 @@ class TrainingClass:
         def __str__(self) -> str:
             return self.report()
 
+        def add_train_epoch(self, error: Tensor, accur: Tensor,
+                            state_dict: OrderedDict, comment: str = None,
+                            epoch_nb: int = None) -> None:
+            if epoch_nb is None:
+                epoch_nb = len(self.train_error)    # That way epoch_nb starts at 0
+            self.train_error.append(error)
+            self.train_accur.append(accur)
+            self.state_dict_list.append(
+                {k: v.cpu() for k, v in state_dict.items()})
+            self.add_comment(comment)
+            self.train_epoch_idx.append(epoch_nb)
+
+        def add_valid_epoch(self, error: Tensor, accur: Tensor,
+                            comment: str = None, epoch_nb: int = None) -> None:
+            """Method used to add validation epoch loss information.
+
+            This is called by the pytorch lightning custom model's
+            :meth:`lightning_objects.LitConvNet.on_validation_epoch_end`.
+
+            Args:
+                error: validation error.
+                accur: validation accuracy.
+                comment: A string with a comment to be added to the training
+                    report.
+                epoch_nb: The epoch number, which may be a float if the
+                    lightning's `Trainer <https://lightning.ai/docs/pytorch/stable/common/trainer.html>`_
+                    flag `val_check_interval <https://lightning.ai/docs/pytorch/stable/common/trainer.html#val-check-interval>`_
+                    is a float.
+
+            """
+            if epoch_nb is None:
+                epoch_nb = len(self.valid_error)
+            self.valid_error.append(error)
+            self.valid_accur.append(accur)
+            self.add_comment(comment)
+            self.valid_epoch_idx.append(epoch_nb)
+
         def add_epoch(self, error_tuple: tuple[Tensor, Tensor],
                       accur_tuple: tuple[Tensor, Tensor],
-                      state_dict: OrderedDict, comment: str = None):
-            """Method for adding an epoch's information to the class.
+                      state_dict: OrderedDict, comment: str = None) -> None:
+            """Method for adding a training + validation epoch's information to
+            the class.
+
+            This is used by the :func:`~train_model` function for the training
+            of pytorch's Module models. For pytorch lightning models, the
+            :meth:`~add_train_epoch` and :meth:`~add_valid_epoch` methods will
+            be called directly.
 
             Args:
                 error_tuple: training and validation errors.
@@ -682,14 +753,9 @@ class TrainingClass:
             """
             train_error, valid_error = error_tuple
             train_accur, valid_accur = accur_tuple
-            self.train_error.append(train_error)
-            self.valid_error.append(valid_error)
-            self.train_accur.append(train_accur)
-            self.valid_accur.append(valid_accur)
-            self.state_dict_list.append(
-                {k: v.cpu() for k, v in state_dict.items()})
-            if comment is not None:
-                self.comment += str(comment)    # str() just to avoid problems.
+            # Only passing the comment once, so that it is not repeated
+            self.add_train_epoch(train_error, train_accur, state_dict, comment)
+            self.add_valid_epoch(valid_error, valid_accur)
 
         def finish_training(self):
             """Method for adapting the class's attributes after training.
@@ -699,11 +765,13 @@ class TrainingClass:
             this training and separating its state dict.
 
             """
-            self.train_error = th.cat(self.train_error)
-            self.valid_error = th.cat(self.valid_error)
-            self.train_accur = th.cat(self.train_accur)
-            self.valid_accur = th.cat(self.valid_accur)
-            best_epoch = int(th.argmin(self.valid_error))
+            self.train_error = th.Tensor(self.train_error)
+            self.valid_error = th.Tensor(self.valid_error)
+            self.train_accur = th.Tensor(self.train_accur)
+            self.valid_accur = th.Tensor(self.valid_accur)
+            self.train_epoch_idx = th.Tensor(self.train_epoch_idx)
+            self.valid_epoch_idx = th.Tensor(self.valid_epoch_idx)
+            best_epoch = int(self.valid_epoch_idx[int(th.argmin(self.valid_error))])
             self.best_epoch = best_epoch
             self.best_state = self.state_dict_list[best_epoch]
 
@@ -736,7 +804,8 @@ class TrainingClass:
             if self.comment is None:
                 self.comment = comment
             else:
-                self.comment += comment
+                if comment is not None:
+                    self.comment += str(comment)
 
 class ReportManager:
     """Class for managing a model's report folder and report files.
@@ -761,7 +830,7 @@ class ReportManager:
 
         report_dir: The name of the Reports folder (where the individual model
             report directories are stored). Default is ``"_Report"``.
-        complete path: If the user wants to use a base folder different from the
+        complete_path: If the user wants to use a base folder different from the
             current one, it can specify a path and the report manager will enter
             it. The model's reports will be stored in
             ``complete_path/report_dir/dirname``. If nothing is specified, the
@@ -1017,25 +1086,3 @@ class ReportManager:
             self.file.close()
             # If we get an exception that can be handled, we can add
             # "return True" for that case.
-
-
-
-if __name__ == '__main__':
-    from datasets import *
-    from nets import *
-
-    device = th.device('cuda:0' if th.cuda.is_available() else 'cpu')
-    print(f"device: {device}")
-    with open('.//_Data/colab_dataset.pkl', 'rb') as f:
-        full_dataset = pickle.load(f)
-
-    fold = 1
-    tds = HASYv2Dataset()
-    vds = HASYv2Dataset()
-    tds = tds.cross_val(fold, True, full_dataset)
-    vds = vds.cross_val(fold, False, full_dataset)
-    del full_dataset  # In order to avoid using all of the available memory
-    model = TwoLayer(dirname='TwoLayerTest')
-    tdl = DataLoader(tds, batch_size=1, shuffle=True)
-    vdl = DataLoader(vds, batch_size=10000)
-    train_model(model, 10, 1e-4, nn.NLLLoss(), (tdl, vdl))

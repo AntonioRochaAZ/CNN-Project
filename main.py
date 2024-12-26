@@ -8,14 +8,13 @@ import pygame, sys
 from pygame.locals import *
 from pygame_classes import Button
 from datasets import *
+import matplotlib.pyplot as plt
 import asyncio # pygbag
 
 
 # Setup Model ------------------------------------------------ #
 print("Opening model...")
-with open(
-        './/_Reports/TwoLayerTest1 - 2021-11-12 16_34_06.229661/best_model.pkl',
-        'rb') as f:
+with open('.//_Reports/FourLayer_lightning_test - 2024-12-25 13_18_07.679074/best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 resize = transforms.Resize((32, 32))
@@ -95,9 +94,14 @@ async def main():
 
         # Drawing the points ------------------------------------- #
         for point in draw_set:      # Drawing the points.
-            pygame.draw.rect(drawing_board, (0, 0, 0),
-                            pygame.Rect((point[0] - side / 2, point[1] - side / 2),
-                                        (side, side)), width=0)
+            pygame.draw.rect(
+                drawing_board, (0, 0, 0),
+                pygame.Rect(
+                    (point[0] - side / 2, point[1] - side / 2),
+                    (side, side)
+                ),
+                width=0
+            )
 
         # Events ------------------------------------------------- #
         for event in pygame.event.get():
@@ -163,9 +167,14 @@ async def main():
 
         # Update ------------------------------------------------- #
         screen.blit(drawing_board, (0,0))
-        pygame.draw.rect(layer, (0, 0, 0),
-                        pygame.Rect((loc[0] - side / 2, loc[1] - side / 2),
-                                    (side, side)), width=0)    # Mouse arrow
+        pygame.draw.rect(
+            layer, (0, 0, 0),
+            pygame.Rect(
+                (loc[0] - side / 2, loc[1] - side / 2),
+                (side, side)
+            ),
+            width=0
+        )    # Mouse cursor
         screen.blit(layer, (0, 0))
         screen.blit(options, (0, 640))
 
@@ -183,8 +192,15 @@ async def main():
         txt_list = []
         lbl_list = []
         val_list = []
+
         img = Image.open(".//_Data/pyimage.bmp")
         tsr = grayscale(img_to_tsr(resize(img))) - 0.5
+        # Testing visualizing the actual tensor:
+        # fig = plt.figure()
+        # plt.imshow(tsr.view(32,32).numpy())
+        # plt.savefig(".//_Data/tensor.png")
+        # plt.close(fig)
+
         out = model(tsr.view(1, 1, 32, 32)).view(-1)
         out_copy = out.clone()
 

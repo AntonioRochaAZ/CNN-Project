@@ -1,3 +1,5 @@
+import warnings
+
 from training import NetBase
 import torch.nn as nn
 
@@ -6,10 +8,14 @@ class ConvNetBase(NetBase):
     This defines a general forward method that is the same for all of them.
     """
     def __init__(self, **kwargs):
+        if "is_classifier" in kwargs:
+            if not kwargs["is_classifier"]:
+                warnings.warn('Keyword argument "is_classifier" '
+                              'overridden to True in ConvNetBase.')
+        kwargs["is_classifier"] = True  # override
         super(ConvNetBase, self).__init__(**kwargs)
         self.conv_net = None
         self.lin_net = None
-        self.is_classifier = True
 
     def forward(self, inputs):
         batch_size = inputs.shape[0]

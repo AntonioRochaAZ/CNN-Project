@@ -13,9 +13,13 @@
     "params": "all",
     "learning_rate": 1e-4,
     "trainer_kwargs": {
-      "max_epochs": 1,
+      "max_epochs": 10,
       "accelerator": "cpu",
       "deterministic": true
+    },
+    "finish_training_kwargs": {
+      "remove_bool": true,
+      "plot_accuracy": true
     }
   }
 }

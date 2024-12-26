@@ -1,0 +1,25 @@
+{
+  "seed": 74,
+  "comment": "TwoLayer lightning test!",
+  "model": {
+    "model_name": "TwoLayer",
+    "model_args": [],
+    "model_kwargs": {
+      "dirname": "TwoLayer_lightning"
+    }
+  },
+  "training": {
+    "loss_fn": "NLLLoss",
+    "params": "all",
+    "learning_rate": 1e-4,
+    "trainer_kwargs": {
+      "max_epochs": 10,
+      "accelerator": "cpu",
+      "deterministic": true
+    },
+    "finish_training_kwargs": {
+      "remove_bool": true,
+      "plot_accuracy": true
+    }
+  }
+}
