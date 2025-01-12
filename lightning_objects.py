@@ -10,7 +10,134 @@ import torch.nn as nn
 from training import report
 from lightning.pytorch import LightningModule, seed_everything, Trainer
 
+
+def train_lightning_model(config, loader_tuple):
+    """Function for training a Lightning model (more specifically a
+    :class:`~LitConvNet` model).
+
+    There are two possible ways of loading a pre-existing model:
+    
+    -   By loading the ``best_model.pkl``: if the user specified the 
+        directory of the model's report with 
+        ``config["training"]["trainer_kwargs"]["default_root_dir"]``.
+        Note that this is preferable as it will also load the :class:`~training.TrainingClass`
+        and :class:`~training.ReportManager` classes in their latest state,
+        instead of recreating them from scratch.
+    
+    -   By loading a lightning checkpoint: if the user specified its
+        path through the config entry
+        ``config["training"]["fit_kwargs"]["ckpt_path"]``.
+
+    .. note::
+        If both options are specified in the config file,
+        both the best model will be loaded and its checkpoints.
+
+    Args:
+        config: The config dictionary from which defined training and model
+            hyperparameters.
+        loader_tuple: A tuple with two torch.utils.data.DataLoader objects:
+            for training and validation respectively.
+
+    """
+
+    # LOADING CONFIG
+    # import json
+    # with open("_configs/config.json", "r") as f:
+    #     config = json.load(f)
+
+    # DEFINING DATALOADERS:
+    # loader_tuple = (None, None)     # for now
+
+    # SETTING SEED:
+    seed = config.get("seed", 74)
+    seed_everything(seed)
+
+    # SETTING THE MODEL UP:
+    # Check if we must load a model.
+    trainer_kwargs = config["training"].get("trainer_kwargs", dict())
+    if "default_root_dir" in trainer_kwargs:
+        # Load best model (since this will load trainclass information etc.)
+        best_model_path = os.path.join(trainer_kwargs["default_root_dir"], "best_model.pkl")
+        if os.path.exists(best_model_path):
+            with open(best_model_path, "rb") as f:
+                model = pickle.load(f)
+        else:
+            warn(f"COULD NOT FIND best_model.pkl in default_root_dir ({trainer_kwargs['default_root_dir']})."
+                 " Creating new model instance. Checkpoint will be loaded if training.fit_kwargs.ckpt_path is specified.")
+            model = LitConvNet(config)
+        # For loading a specific checkpoint, one can pass ckpt_path in config["training"] (see below).
+    else:
+        model = LitConvNet(config)
+        # trainer_kwargs["default_root_dir"] = model.manager.path
+
+    # TRAINING:
+    # Getting trainer:
+    trainer = get_trainer(**trainer_kwargs)
+    # Actual Training:
+    train_loader, valid_loader = loader_tuple
+    # Reporting data loader:
+    with model.manager('DataReport.txt', "a") as f:
+        f.write(
+            f'Training {len(model.trainclass)}: ----------------------\n'
+            f'Training Dataset:\n'
+            f'{report(train_loader.dataset)}\n'
+            f'Validation Dataset:\n'
+            f'{report(valid_loader.dataset)}\n'
+        )
+    fit_kwargs = config["training"].get("fit_kwargs", dict())
+    if not "ckpt_path" in fit_kwargs:
+        fit_kwargs["ckpt_path"] = None
+    trainer.fit(model, train_loader, valid_loader, ckpt_path=fit_kwargs["ckpt_path"])
+
+def get_trainer(**user_trainer_kwargs):
+    """Returns lightning's trainer object according to user-defined kwargs.
+    Some default kwargs are defined in this function.
+
+    Keyword Args:
+        **user_trainer_kwargs: Any kwargs that can be passed to Lightning's 
+            lightning.pytorch.Trainer object. Only one default kwarg is specified:
+            ``deterministic = True``.
+
+    """
+    trainer_kwargs = {  # TODO: use Hydra config for default trainer kwargs
+        "deterministic": True
+    }
+    trainer_kwargs.update(user_trainer_kwargs)
+    return Trainer(**trainer_kwargs)
+
 class LitConvNet(LightningModule):
+    """Generic LightningModule wrapping Pytorch models defined in :py:mod:`nets`.
+
+    Class Attributes:
+        model_dict: dictionary relating names to the pytorch models defined in :py:mod:`nets`. Must
+            be updated if new models are added.
+            
+            .. code-block:: python
+
+                # Dictionary of available model names:
+                model_dict = {
+                    "twolayer":   TwoLayer,
+                    "threelayer": ThreeLayer,
+                    "fourlayer":  FourLayer,
+                    "tfcnn":      TFCNN,
+                }
+
+    Args: 
+        config: a dictionary containing all information required for model initialization and training. 
+            See the example at the top of the page.
+
+    Attributes:
+        config: the config passed for ``__init__``.
+        model_config: the ``"model"`` entry of the config.
+        training_config: the ``"training"`` entry of the config.
+        model: the actual PyTorch model (one of the models defined in :py:mod:`nets`).
+        loss: a ``torch.nn`` loss function, used for calculating the loss metrirc.
+        train_step_loss: a list containing each training step's loss. Cleared at the end of the epoch.
+        valid_step_loss: a list containing each validation step's loss. Cleared at the end of the epoch.
+        train_step_accur: a list containing each training step's accuracy. Cleared at the end of the epoch.
+        valid_step_accur: a list containing each validation step's accuracy. Cleared at the end of the epoch.
+
+    """
 
     # Dictionary of available model names:
     model_dict = {
@@ -67,7 +194,7 @@ class LitConvNet(LightningModule):
         return self.model.forward(x)
 
     def on_fit_start(self) -> None:
-        """Does some reporting with the model :class:`~TrainClass`
+        """[Custom documentation] Does some reporting with the model :class:`~TrainClass`
         :meth:`~TrainClass.add_training` method. If it is the model's first
         fit, then a ModelReport.txt is also created.
         """
@@ -89,6 +216,18 @@ class LitConvNet(LightningModule):
         )
 
     def _common_step(self, batch: tuple[th.Tensor, th.Tensor], batch_idx: int) -> tuple[tuple[th.Tensor, th.Tensor], th.Tensor, th.Tensor]:
+        """[Custom documentation] Calculates prediction, loss and accuracy. This is a generic 
+        function used for both training and validation.
+
+        Args:
+            batch: a tuple containing the input and the label.
+
+        Returns:
+            A tuple containing:
+            - A tuple with the loss and accuracy;
+            - The model output (``y = self.model.forward(x)``);
+            - The label, as passed in the batch argument.
+        """
         x, label = batch
         y = self.model.forward(x)
         if self.model.is_classifier:
@@ -186,7 +325,7 @@ class LitConvNet(LightningModule):
         )
 
     def on_fit_end(self) -> None:
-        """Calls the model TrainClass' :meth:`~TrainClass.finish_training`"""
+        """[Custom documentation] Calls the model TrainClass' :meth:`~TrainClass.finish_training`"""
         # Fix last validation epoch validation index, because lightning seems to
         # run a last validation epoch at the end of training:
         self.model.trainclass.train_list[-1].valid_epoch_idx[-1] = \
@@ -211,66 +350,6 @@ class LitConvNet(LightningModule):
         return self.model.trainclass
 
     def report(self) -> str:
-        # Could eventually add more to this
+        """TODO: Could eventually add more to this. Currently just returns ``self.model.report()`` 
+        """
         return self.model.report()
-
-def get_trainer(**user_trainer_kwargs):
-    """Returns lightning's trainer object according to user-defined kwargs.
-    Some default kwargs are defined in this function.
-    """
-    trainer_kwargs = {  # TODO: use Hydra config for default trainer kwargs
-        "deterministic": True
-    }
-    trainer_kwargs.update(user_trainer_kwargs)
-    return Trainer(**trainer_kwargs)
-
-def train_lightning_model(config, loader_tuple):
-
-    # LOADING CONFIG
-    # import json
-    # with open("_configs/config.json", "r") as f:
-    #     config = json.load(f)
-
-    # DEFINING DATALOADERS:
-    # loader_tuple = (None, None)     # for now
-
-    # SETTING SEED:
-    seed = config.get("seed", 74)
-    seed_everything(seed)
-
-    # SETTING MODEL UP:
-    # Check if we must load a model.
-    trainer_kwargs = config["training"].get("trainer_kwargs", dict())
-    if "default_root_dir" in trainer_kwargs:
-        # Load best model (since this will load trainclass information etc.)
-        best_model_path = os.path.join(trainer_kwargs["default_root_dir"], "best_model.pkl")
-        if os.path.exists(best_model_path):
-            with open(best_model_path, "rb") as f:
-                model = pickle.load(f)
-        else:
-            warn(f"COULD NOT FIND best_model.pkl in default_root_dir ({trainer_kwargs['default_root_dir']})."
-                 " Creating new model instance. Checkpoint will be loaded if training.fit_kwargs.ckpt_path is specified.")
-            model = LitConvNet(config)
-        # For loading a specific checkpoint, one can pass ckpt_path in config["training"] (see below).
-    else:
-        model = LitConvNet(config)
-        # trainer_kwargs["default_root_dir"] = model.manager.path
-
-    # TRAINING:
-    # Getting trainer:
-    trainer = get_trainer(**trainer_kwargs)
-    # Actual Training:
-    train_loader, valid_loader = loader_tuple
-    # Reporting data loader:
-    with model.manager('DataReport.txt', "a") as f:
-        f.write(
-            f'Training {len(model.trainclass)}: ----------------------\n'
-            f'Training Dataset:\n'
-            f'{report(train_loader.dataset)}\n'
-            f'Validation Dataset:\n'
-            f'{report(valid_loader.dataset)}\n'
-        )
-    fit_kwargs = config["training"].get("fit_kwargs", dict())
-    if not "ckpt_path" in fit_kwargs:
-        fit_kwargs["ckpt_path"] = None
-    trainer.fit(model, train_loader, valid_loader, ckpt_path=fit_kwargs["ckpt_path"])

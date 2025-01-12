@@ -23,7 +23,8 @@ def train_model(
         params: Union[GeneratorType, str] = None, print_bool: bool = True,
         remove_bool: bool = True, comment: str = None):
 
-    """Function for training a :class:`NetBase` model.
+    """Function for training a Pytorch :class:`NetBase` model.
+    For training PytorchLightning models, check :py:mod:`lightning_objects`.
 
     This function will create a folder with reports about the training and the
     model, according to the information contained in the model's report manager
@@ -1074,7 +1075,7 @@ class ReportManager:
                     elif value2 == 'n':
                         raise FileNotFoundError("Report Folder does not exist.")
 
-        def __enter__(self) -> "open file":
+        def __enter__(self) -> "an_open_file":
             self.file = open(
                 f".//{self.base_dir}/{self.dirname}/{self.filename}",
                 self.method)

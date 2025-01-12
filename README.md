@@ -18,9 +18,13 @@ The code's documentation is done with [Sphinx](https://www.sphinx-doc.org/)
 and can be found [here](https://antoniorochaaz.github.io/CNN-Project/).
 
 > Note:
+    (12/01/2025) A pytorch lightning implementation is finished and pushed to the main branch.
+
+
+> Note:
     Work has been discontinued. A continuation would imply developing more varied CNN models. In particular, ones that do not use pooling (which seems to decrease dimensionality too quickly for this small problem).
 
-The pygame interface works and can be run through the command line with ```python main.py```.
+The pygame interface works and can be run through the command line with ```python main.py```. It is currently not documented.
 The conda environment used can be found in the environment.yml.
 
 Dataset

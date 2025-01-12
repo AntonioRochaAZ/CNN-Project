@@ -1,27 +1,27 @@
 {
-    "seed": 74,
-    "comment": "First lightning test!",
-    "model": {
-      "model_name": "FourLayer",
-      "model_args": [],
-      "model_kwargs": {
-        "dirname": "FourLayer_lightning_test"
-      }
+  "seed": 74,
+  "comment": "First lightning test!",
+  "model": {
+    "model_name": "FourLayer",
+    "model_args": [],
+    "model_kwargs": {
+      "dirname": "FourLayer_lightning_test"
+    }
+  },
+  "training": {
+    "loss_fn": "NLLLoss",
+    "params": "all",
+    "learning_rate": 1e-4,
+    "trainer_kwargs": {
+      "max_epochs": 2,
+      "limit_train_batches": 10,
+      "limit_val_batches": 10,
+      "accelerator": "cpu",
+      "deterministic": true
     },
-    "training": {
-      "loss_fn": "NLLLoss",
-      "params": "all",
-      "learning_rate": 1e-4,
-      "trainer_kwargs": {
-        "max_epochs": 2,
-        "limit_train_batches": 10,
-        "limit_val_batches": 10,
-        "accelerator": "cpu",
-        "deterministic": true
-      },
-      "finish_training_kwargs": {
-        "remove_bool": true,
-        "plot_accuracy": true
-      }
+    "finish_training_kwargs": {
+      "remove_bool": true,
+      "plot_accuracy": true
     }
   }
+}

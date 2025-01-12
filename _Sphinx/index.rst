@@ -13,6 +13,7 @@
    Base Classes and Functions <defs>
    Dataset Classes <datasets>
    Neural Networks <nets>
+   Lightning implementation <lightning_objects>
    Decorators <decorators>
 
 
