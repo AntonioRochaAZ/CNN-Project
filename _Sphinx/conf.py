@@ -29,7 +29,8 @@ author = 'Antonio Rocha'
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
               'sphinx.ext.autosectionlabel', 'nbsphinx',
-              'sphinx.ext.viewcode', 'nbsphinx_link'
+              'sphinx.ext.viewcode', 'nbsphinx_link',
+              'myst_parser'
 ]
 
 autodoc_member_order = 'bysource'
@@ -62,7 +63,7 @@ html_title="CNN Project"
 
 
 # html_logo = '_assets/logo.gif'
-html_favicon = '_assets/favicon.ico'
+html_favicon = '_copy_contents/_Assets/favicon.ico'
 
 html_theme = 'furo'
 html_theme_options = {
@@ -83,3 +84,4 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_extra_path = ['_copy_contents']
