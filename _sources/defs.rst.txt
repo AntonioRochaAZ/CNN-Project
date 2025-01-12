@@ -1,5 +1,5 @@
 Base Classes and Functions
 ==========================
 
-.. automodule:: main
+.. automodule:: training
    :members:
