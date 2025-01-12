@@ -1,0 +1,19 @@
+config:
+  comment: TwoLayer lightning test!
+  model:
+    model_args: []
+    model_kwargs:
+      dirname: TwoLayer_Lightning
+    model_name: TwoLayer
+  seed: 74
+  training:
+    finish_training_kwargs:
+      plot_accuracy: true
+      remove_bool: true
+    learning_rate: 0.0001
+    loss_fn: NLLLoss
+    params: all
+    trainer_kwargs:
+      accelerator: gpu
+      deterministic: true
+      max_epochs: 5

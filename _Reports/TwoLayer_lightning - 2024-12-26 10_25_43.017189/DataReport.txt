@@ -1,7 +1,0 @@
-Training 0: ----------------------
-Training Dataset:
-Number of data points: 151288
-
-Validation Dataset:
-Number of data points: 16945
-

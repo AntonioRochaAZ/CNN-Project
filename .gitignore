@@ -1,7 +1,18 @@
+# IDE related:
 .idea
+.vscode
+
+# Python related:
 .ipynb_checkpoints
-**/.DS_Store
 **/__pycache__
+
+# Mac OS related:
+**/.DS_Store
+
+# Data:
 _Data/HASYv2
 _Data/colab_dataset.pkl
+_Data/pyimage.bmp
+
+# Others:
 build

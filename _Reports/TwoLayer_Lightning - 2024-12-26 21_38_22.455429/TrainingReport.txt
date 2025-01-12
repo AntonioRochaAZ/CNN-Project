@@ -1,0 +1,15 @@
+Overall Training Report: TwoLayer_Lightning - 2024-12-26 21_38_22.455429
+	Number of Trainings: 1
+	Total Number of Epochs: 5
+	Best Epoch: 4
+
+Training Information:
+	Training 0: ------------------------
+		Number of Epochs: 5
+		Learning Rate: (0.0001,)
+		Loss Function: NLLLoss()
+		File Name: 2024-12-26 21:38:22.554937
+		Best Epoch: 4
+		Comments: TwoLayer lightning test!
+
+

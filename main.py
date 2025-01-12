@@ -13,8 +13,8 @@ import asyncio # pygbag
 
 
 # Setup Model ------------------------------------------------ #
-print("Opening model...")
-with open('.//_Reports/FourLayer_lightning_test - 2024-12-25 13_18_07.679074/best_model.pkl', 'rb') as f:
+print("Loading model...")
+with open('.//_Reports/TwoLayer_Lightning - 2024-12-26 21_38_22.455429/best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 resize = transforms.Resize((32, 32))
@@ -68,53 +68,17 @@ async def main():
     text = ''
 
     # Drawing variables:
-    side = 30               # Square's side length
-    extra = 0.1 * side      # Extra range for erasing points
-    draw_set = set()        # Set of points to be drawn
+    side = 20               # Square's side length
+    cursor_side = 40        # Square's side length
+    # Background --------------------------------------------- #
+    screen.fill((116, 125, 207))
+    drawing_board.fill((255, 255, 255))
+    layer.fill((255, 255, 255))
+    options.fill("gray")
     while True:
-        # Background --------------------------------------------- #
-        screen.fill((116, 125, 207))
-        drawing_board.fill((255, 255, 255))
-        layer.fill((255, 255, 255))
-        options.fill("gray")
-
-        # Mouse handling ----------------------------------------- #
-        loc = pygame.mouse.get_pos()
-
-        if clicking:
-            draw_set.add(loc)
-        if right_clicking:
-            remove_set = set()
-            for point in draw_set:  # erase points next to the mouse.
-                if distance(loc, point) < side+extra:
-                    remove_set.add(point)
-            draw_set = draw_set - remove_set
-        # if middle_click:            # No implementation for the moment.
-        #     pass
-
-        # Drawing the points ------------------------------------- #
-        for point in draw_set:      # Drawing the points.
-            pygame.draw.rect(
-                drawing_board, (0, 0, 0),
-                pygame.Rect(
-                    (point[0] - side / 2, point[1] - side / 2),
-                    (side, side)
-                ),
-                width=0
-            )
-
         # Events ------------------------------------------------- #
         for event in pygame.event.get():
-
-            # Quitting:
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-
+            
             # Pressing mouse buttons:
             if event.type == MOUSEBUTTONDOWN:
 
@@ -124,7 +88,8 @@ async def main():
                     for index, button in enumerate(button_list):
                         if button.rect.collidepoint(*loc):
                             button.click(event)
-                            draw_set = set()  # Clear the drawing
+                            # If any of the buttons are pressed, clear the screen:
+                            drawing_board.fill((255, 255, 255))
                             if index < 3:  # If it's not the clear button
                                 text += txt_list[index]  # Add to the text box
 
@@ -145,16 +110,22 @@ async def main():
                 #     pass
 
             # Releasing mouse buttons:
-            if event.type == MOUSEBUTTONUP:
+            elif event.type == MOUSEBUTTONUP:
                 if event.button == 1:
                     clicking = False
                 if event.button == 3:
                     right_clicking = False
 
             # Typing:
-            if event.type == KEYDOWN:
-                # If the text box is active:
-                if active:
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    # Quitting:
+                    pygame.quit()
+                    sys.exit()
+
+                # If not quitting, check if the text box is 
+                # active and write to it if so.
+                elif active:
                     # Not implemented: pressing return
                     # if event.key == K_RETURN:
                     #     print(text)
@@ -164,14 +135,48 @@ async def main():
                         text = text[:-1]
                     else:
                         text += event.unicode
+            
+            # Quitting by pressing the X:
+            elif event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+        # Mouse handling ----------------------------------------- #
+        # Drawing the points ------------------------------------- #
+        loc = pygame.mouse.get_pos()
+
+        if clicking:
+            # Draw black square
+            pygame.draw.rect(
+                drawing_board, (0, 0, 0),
+                pygame.Rect(
+                    ((loc[0]//side) * side, (loc[1]//side) * side),
+                    (cursor_side, cursor_side)
+                ),
+                width=0
+            )
+
+        if right_clicking:
+            # Draw white square:
+            pygame.draw.rect(
+                drawing_board, (255, 255, 255),
+                pygame.Rect(
+                    ((loc[0]//side) * side, (loc[1]//side) * side),
+                    (cursor_side, cursor_side)
+                ),
+                width=0
+            )
+        # if middle_click:            # No implementation for the moment.
+        #     pass
 
         # Update ------------------------------------------------- #
         screen.blit(drawing_board, (0,0))
+        layer.fill((255, 255, 255))
         pygame.draw.rect(
             layer, (0, 0, 0),
             pygame.Rect(
-                (loc[0] - side / 2, loc[1] - side / 2),
-                (side, side)
+                (loc[0] - cursor_side / 2, loc[1] - cursor_side / 2),
+                (cursor_side, cursor_side)
             ),
             width=0
         )    # Mouse cursor
@@ -195,6 +200,8 @@ async def main():
 
         img = Image.open(".//_Data/pyimage.bmp")
         tsr = grayscale(img_to_tsr(resize(img))) - 0.5
+        tsr = (tsr > 0).float() - 0.5
+
         # Testing visualizing the actual tensor:
         # fig = plt.figure()
         # plt.imshow(tsr.view(32,32).numpy())

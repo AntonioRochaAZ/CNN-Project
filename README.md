@@ -10,39 +10,37 @@ felt overwhelmed by the number of different of ways that one can combine
 convolutional, max-pooling and linear layers - with different kernel sizes and
 padding sizes, strides, dilation and feature numbers.
 
-My objective is to develop skills in python and get used to using GitHub while
-exploring a variety of CNN architectures to find in practice which ones work
+My objective with this project was to develop skills in python and get used to using GitHub, while also
+exploring CNN architectures to find in practice which ones work
 best for different applications. This project will also serve as a portfolio.
 
 The code's documentation is done with [Sphinx](https://www.sphinx-doc.org/)
 and can be found [here](https://antoniorochaaz.github.io/CNN-Project/).
 
 > Note:
-    Work is discontinued. More computational power would be required to improve
-    models.
+    Work has been discontinued. A continuation would imply developing more varied CNN models. In particular, ones that do not use pooling (which seems to decrease dimensionality too quickly for this small problem).
 
-The pygame interface works and can be run through the command line with ```python -m main.py```.
+The pygame interface works and can be run through the command line with ```python main.py```.
 The conda environment used can be found in the environment.yml.
 
 Dataset
 -------
 
-The first dataset I've chosen to use is the
+The dataset I've chosen to use is the
 [HASYv2 dataset](https://arxiv.org/abs/1701.08380), because it has many more
 classes and symbols than other symbol recognition datasets such as MNIST, and
-the final models could possibly be adapted in the future for translating
+the final models could perhaps be adapted in the future for translating
 handwritten equations (even if they are handwritten through a mouse pad of
 sorts) into LaTeX equations.
 
-This also inspires me to develop some kind of application where the user can
-draw symbols in a 32x32 pixel grid with its mouse, and a trained net will try to
-guess it at the same time. The user can then add it live to the LaTeX equation.
+The pygame interface was developed so that the user may
+draw symbols in a 32x32 pixel grid with its mouse, which the trained net can try to
+identify it at the same time. The user can then add it live to the LaTeX equation.
 This application idea draws inspiration from Google's
 [Quick, Draw!](https://quickdraw.withgoogle.com/).
 
 Update 14/11/2021: I've found out through a friend that a website already exists
-for this: (http://detexify.kirelabs.org/symbols.html). I might try using their
-dataset in the future
+for this: (http://detexify.kirelabs.org/symbols.html).
 
 > Note:
     In order to work with the dataset on
@@ -54,30 +52,15 @@ dataset in the future
     because it exceeds 100MB. If you wish to use the codes presented here, you
     need to unzip the dataset (which can be found
     [here](https://zenodo.org/record/259444#.YYwmp73MLUJ)) in the
-    `_Data` folder (creating a `HASYv2` folder with all of its contents).
+    `_Data` folder (creating a `HASYv2` folder with all of its contents), and create a `datasets.HASYv2Dataset` object.
 
 Current State of Development
 ----------------------------
 
-> Note:
-    With the return of my classes, development will be slowed down
-    significantly in the next few months.
+Base classes and a few models have already been defined, but development has been halted. Initially developed models did not
+achieve very good accuracies (at most ~60%), even with a batch size of 1. New models must be developed and trained.
 
-Base classes and a few models have already been defined, but development is
-hindered by the time it takes to train models. Currently, using Google Colab's
-GPU acceleration, training on one fold takes several hours to complete (which
-basically uses up the daily available GPU runtime). Training a model with all
-10 folds would thus take up to 10 days for each model. Development should thus
-shift to implementations with
-[PyTorch Lightning](https://www.pytorchlightning.ai/) and
-[PyTorch/XLA](https://github.com/pytorch/xla/) (see [Objectives](#objectives)),
-that could allow for multicore TPU training in Colab, speeding up the process.
-
-In terms of the Pygame implementation (see "pygame-tests" branch), much has yet
-to be done and improved, but the base window is about what I had in mind. I have
-understood a little bit better how Pygame works, which will help in the next
-steps. The text box is still very limited, and I'll be working on it in the
-future.
+In terms of the Pygame implementation, the UI could still be improved, but it is functional.
 
 ![Current State of the pygame implementation.](_Assets/drawingboard.bmp
 "Drawing Board")
@@ -111,17 +94,13 @@ contains some things I have completed and others that I still want to complete.
     written a docstring for everything so it's particularly empty as of know.
     You can find the documentation [here](https://antoniorochaaz.github.io/CNN-Project/).
 
-- [(WIP)] Implement an interface for real-time drawing and prediction.
+- [X] Implement an interface for real-time drawing and prediction.
 
-    >Development has started, using the Pygame module.
+    >Done with the PyGame module.
 
-- [ ] Try to use [PyTorch Lightning](https://www.pytorchlightning.ai/) and
-  [PyTorch/XLA](https://github.com/pytorch/xla/) for accelerating training
-  using cloud multi-core TPUs (in Google Colab).
+- [X] Try to use [PyTorch Lightning](https://www.pytorchlightning.ai/).
 
-    > Despite knowing how to use Google Colab's GPUs for accelerating PyTorch code,
-    TPUs and specifically multi-core parallelism is something I don't (yet) know
-    how to work with.
+    > A Pytorchlightning implementation has been done.
 
 - [ ] Perhaps learn and use [Optuna](https://optuna.org/) for selecting training
   and Neural Networks hyperparameters.

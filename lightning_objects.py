@@ -254,7 +254,7 @@ def train_lightning_model(config, loader_tuple):
         # For loading a specific checkpoint, one can pass ckpt_path in config["training"] (see below).
     else:
         model = LitConvNet(config)
-        trainer_kwargs["default_root_dir"] = model.manager.path
+        # trainer_kwargs["default_root_dir"] = model.manager.path
 
     # TRAINING:
     # Getting trainer:
